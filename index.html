@@ -1,8 +1,7 @@
-<!-- ✅ Replace your existing HTML with this updated one -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>NBA 2K23 MyCareer Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
@@ -100,23 +99,6 @@
       display: none;
     }
 
-    .bonus-panel {
-      margin-top: 15px;
-      padding: 10px;
-      background: var(--section);
-      border-radius: 10px;
-    }
-
-    .bonus-panel select {
-      margin-bottom: 10px;
-    }
-
-    #bonusInfo {
-      font-size: 14px;
-      display: none;
-      margin-top: 10px;
-    }
-
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
@@ -155,46 +137,57 @@
     <label>Total Points Bank:
       <input type="number" id="manualTotalPoints" value="1000">
     </label>
+  </div>
 
-    <div class="bonus-panel">
-      <label>Game Result:
-        <select id="resultMultiplier">
-          <option value="1">Lose</option>
-          <option value="1.25">OT Lose</option>
-          <option value="1.5">Win</option>
-          <option value="2">OT Win</option>
-        </select>
+  <!-- Bonus Multipliers Panel -->
+  <div class="panel">
+    <h2>Bonus Multipliers</h2>
+
+    <label>Game Result:
+      <select id="gameResult" onchange="toggleOTBox()">
+        <option value="win">Win</option>
+        <option value="otwin">OT Win</option>
+        <option value="lose">Lose</option>
+        <option value="otlose">OT Lose</option>
+      </select>
+    </label>
+
+    <div id="otCountBox" style="display:none;">
+      <label>Overtime Count (1–6):
+        <input type="number" id="otCount" min="1" max="6" value="1">
       </label>
-
-      <label>Game Type / Opponent:
-        <select id="opponentMultiplier">
-          <option value="1">Easy Opponent</option>
-          <option value="1.25">Normal Opponent</option>
-          <option value="1.5">Hard Opponent</option>
-          <option value="1.75">1st in Conference</option>
-          <option value="2">1st/2nd in League</option>
-          <option value="3">All-Star Game</option>
-        </select>
-      </label>
-
-      <label>Opponent Last Season:
-        <select id="seasonMultiplier">
-          <option value="1">Did Not Make Playoffs</option>
-          <option value="1.25">1st Round</option>
-          <option value="1.5">2nd Round</option>
-          <option value="1.75">Semifinalist</option>
-          <option value="1.9">Finalist</option>
-          <option value="2">Defending Champion</option>
-        </select>
-      </label>
-
-      <button onclick="toggleBonusInfo()">ℹ️ Bonus Multiplier Info</button>
-      <div id="bonusInfo">
-        <p><strong>Game Result:</strong> Win (×1.5), OT Win (×2), OT Lose (×1.25), Lose (×1)</p>
-        <p><strong>Opponent Strength:</strong> Easy (×1), Normal (×1.25), Hard (×1.5), 1st in Conference (×1.75), 1st/2nd in League (×2), All-Star (×3)</p>
-        <p><strong>Last Season:</strong> No Playoffs (×1), 1st Rd (×1.25), 2nd Rd (×1.5), Semis (×1.75), Finalist (×1.9), Champion (×2)</p>
-      </div>
     </div>
+
+    <label>Opponent Type:
+      <select id="opponentType">
+        <option value="1">Easy Opponent</option>
+        <option value="1.25">Normal Opponent</option>
+        <option value="1.5">Hard Opponent</option>
+        <option value="1.75">1st in Conference</option>
+        <option value="2">1st/2nd in League</option>
+        <option value="3">All-Star Game</option>
+      </select>
+    </label>
+
+    <label>Team Last Season:
+      <select id="teamHistory">
+        <option value="1">Did Not Make Playoffs</option>
+        <option value="1.25">1st Round</option>
+        <option value="1.5">2nd Round</option>
+        <option value="1.75">Semifinalist</option>
+        <option value="1.9">Finalist</option>
+        <option value="2">Defending Champions</option>
+      </select>
+    </label>
+
+    <button onclick="toggleMultiplierInfo()">ℹ️ Explanation</button>
+    <div id="multiplierInfo" style="display: none; margin-top:10px;">
+      <p><strong>Game Result:</strong><br>Win ×1.5, OT Win adds +0.1 per OT (e.g. 2OT Win = ×1.7), Lose = ×1, OT Lose = ×1.25</p>
+      <p><strong>Opponent Type:</strong><br>Easy (×1), Normal (×1.25), Hard (×1.5), 1st in Conf (×1.75), League Top 2 (×2), All-Star (×3)</p>
+      <p><strong>Team History:</strong><br>No Playoffs (×1), 1st Rnd (×1.25), 2nd Rnd (×1.5), Semis (×1.75), Finals (×1.9), Champs (×2)</p>
+    </div>
+
+    <label><input type="checkbox" id="disablePointAdd"> Don't add to total bank</label>
   </div>
 
   <!-- Game Stats Panel -->
@@ -221,30 +214,35 @@
   <!-- Upgrade Panel -->
   <div class="panel">
     <h2>Attribute Upgrade Cost</h2>
+
     <div>
       <h3>Offense</h3>
       <label>Current Rating: <input type="number" id="offenseCurrent" min="0" max="98" value="60"></label>
       <label>Target Rating: <input type="number" id="offenseTarget" min="1" max="99" value="70"></label>
       <div class="result">Cost: <span id="offenseCost">0</span></div>
     </div>
+
     <div>
       <h3>Defense</h3>
       <label>Current Rating: <input type="number" id="defenseCurrent" min="0" max="98" value="60"></label>
       <label>Target Rating: <input type="number" id="defenseTarget" min="1" max="99" value="70"></label>
       <div class="result">Cost: <span id="defenseCost">0</span></div>
     </div>
+
     <div>
       <h3>Athleticism</h3>
       <label>Current Rating: <input type="number" id="athleticCurrent" min="0" max="98" value="60"></label>
       <label>Target Rating: <input type="number" id="athleticTarget" min="1" max="99" value="70"></label>
       <div class="result">Cost: <span id="athleticCost">0</span></div>
     </div>
+
     <div>
       <h3>Mental</h3>
       <label>Current Rating: <input type="number" id="mentalCurrent" min="0" max="98" value="60"></label>
       <label>Target Rating: <input type="number" id="mentalTarget" min="1" max="99" value="70"></label>
       <div class="result">Cost: <span id="mentalCost">0</span></div>
     </div>
+
     <button onclick="calculateAllUpgrades()">Calculate All Upgrade Costs</button>
   </div>
 </div>
@@ -262,31 +260,53 @@
     athleticism: r => (r < 60 ? 5 : r <= 79 ? 15 : r <= 89 ? 35 : r <= 94 ? 65 : 100)
   };
 
+  function toggleDarkMode() {
+    document.body.classList.toggle('light-mode');
+  }
+
+  function toggleOTBox() {
+    const val = document.getElementById("gameResult").value;
+    document.getElementById("otCountBox").style.display = val === "otwin" ? "block" : "none";
+  }
+
+  function toggleMultiplierInfo() {
+    const info = document.getElementById("multiplierInfo");
+    info.style.display = info.style.display === "none" ? "block" : "none";
+  }
+
   function calculateTotalPoints() {
     const form = document.forms['statsForm'];
     let earned = 0;
     for (let key in pointValues) {
-      let val = parseInt(form[key].value) || 0;
-      earned += val * pointValues[key];
+      earned += (parseInt(form[key].value) || 0) * pointValues[key];
     }
 
-    // Bonus multipliers
-    const resultMult = parseFloat(document.getElementById('resultMultiplier').value);
-    const oppMult = parseFloat(document.getElementById('opponentMultiplier').value);
-    const seasonMult = parseFloat(document.getElementById('seasonMultiplier').value);
+    const result = document.getElementById("gameResult").value;
+    const opp = parseFloat(document.getElementById("opponentType").value);
+    const team = parseFloat(document.getElementById("teamHistory").value);
+    const disable = document.getElementById("disablePointAdd").checked;
 
-    const finalPoints = Math.round(earned * resultMult * oppMult * seasonMult);
+    let multiplier = 1;
+    if (result === "win") multiplier = 1.5;
+    else if (result === "otwin") {
+      const ot = Math.min(6, parseInt(document.getElementById("otCount").value) || 1);
+      multiplier = 1.5 + (0.1 * ot);
+    } else if (result === "otlose") multiplier = 1.25;
 
+    const total = Math.round(earned * multiplier * opp * team);
     const bank = document.getElementById('manualTotalPoints');
-    const newTotal = parseInt(bank.value) + finalPoints;
-    bank.value = newTotal;
+    const newTotal = disable ? parseInt(bank.value) : parseInt(bank.value) + total;
 
-    document.getElementById('pointsEarned').innerText = finalPoints;
+    if (!disable) bank.value = newTotal;
+    document.getElementById('pointsEarned').innerText = total;
     document.getElementById('pointsBankDisplay').innerText = newTotal;
   }
 
   function calculateAllUpgrades() {
     const categories = ['offense', 'defense', 'athletic', 'mental'];
+    let totalCost = 0;
+    const bank = parseInt(document.getElementById('manualTotalPoints').value);
+
     for (let cat of categories) {
       const current = parseInt(document.getElementById(`${cat}Current`).value);
       const target = parseInt(document.getElementById(`${cat}Target`).value);
@@ -303,12 +323,18 @@
       }
 
       display.innerText = cost;
+      totalCost += cost;
     }
-  }
 
-  function toggleBonusInfo() {
-    const info = document.getElementById('bonusInfo');
-    info.style.display = info.style.display === 'none' ? 'block' : 'none';
+    const upgradeSummary = document.getElementById("upgradeSummary") || document.createElement("div");
+    upgradeSummary.id = "upgradeSummary";
+    upgradeSummary.className = "result";
+    upgradeSummary.innerHTML = `
+      <br>Total Upgrade Cost: <strong>${totalCost}</strong><br>
+      Points Before Upgrade: <strong>${bank}</strong><br>
+      Points After Upgrade: <strong>${bank - totalCost}</strong>
+    `;
+    document.querySelector(".panel:last-child").appendChild(upgradeSummary);
   }
 
   function exportData() {
@@ -369,11 +395,6 @@
     };
     reader.readAsText(file);
   }
-
-  function toggleDarkMode() {
-    document.body.classList.toggle('light-mode');
-  }
 </script>
-
 </body>
 </html>
