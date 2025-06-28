@@ -1,3 +1,4 @@
+<!-- ✅ Replace your existing HTML with this updated one -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,6 +100,23 @@
       display: none;
     }
 
+    .bonus-panel {
+      margin-top: 15px;
+      padding: 10px;
+      background: var(--section);
+      border-radius: 10px;
+    }
+
+    .bonus-panel select {
+      margin-bottom: 10px;
+    }
+
+    #bonusInfo {
+      font-size: 14px;
+      display: none;
+      margin-top: 10px;
+    }
+
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
@@ -137,6 +155,46 @@
     <label>Total Points Bank:
       <input type="number" id="manualTotalPoints" value="1000">
     </label>
+
+    <div class="bonus-panel">
+      <label>Game Result:
+        <select id="resultMultiplier">
+          <option value="1">Lose</option>
+          <option value="1.25">OT Lose</option>
+          <option value="1.5">Win</option>
+          <option value="2">OT Win</option>
+        </select>
+      </label>
+
+      <label>Game Type / Opponent:
+        <select id="opponentMultiplier">
+          <option value="1">Easy Opponent</option>
+          <option value="1.25">Normal Opponent</option>
+          <option value="1.5">Hard Opponent</option>
+          <option value="1.75">1st in Conference</option>
+          <option value="2">1st/2nd in League</option>
+          <option value="3">All-Star Game</option>
+        </select>
+      </label>
+
+      <label>Opponent Last Season:
+        <select id="seasonMultiplier">
+          <option value="1">Did Not Make Playoffs</option>
+          <option value="1.25">1st Round</option>
+          <option value="1.5">2nd Round</option>
+          <option value="1.75">Semifinalist</option>
+          <option value="1.9">Finalist</option>
+          <option value="2">Defending Champion</option>
+        </select>
+      </label>
+
+      <button onclick="toggleBonusInfo()">ℹ️ Bonus Multiplier Info</button>
+      <div id="bonusInfo">
+        <p><strong>Game Result:</strong> Win (×1.5), OT Win (×2), OT Lose (×1.25), Lose (×1)</p>
+        <p><strong>Opponent Strength:</strong> Easy (×1), Normal (×1.25), Hard (×1.5), 1st in Conference (×1.75), 1st/2nd in League (×2), All-Star (×3)</p>
+        <p><strong>Last Season:</strong> No Playoffs (×1), 1st Rd (×1.25), 2nd Rd (×1.5), Semis (×1.75), Finalist (×1.9), Champion (×2)</p>
+      </div>
+    </div>
   </div>
 
   <!-- Game Stats Panel -->
@@ -163,35 +221,30 @@
   <!-- Upgrade Panel -->
   <div class="panel">
     <h2>Attribute Upgrade Cost</h2>
-
     <div>
       <h3>Offense</h3>
       <label>Current Rating: <input type="number" id="offenseCurrent" min="0" max="98" value="60"></label>
       <label>Target Rating: <input type="number" id="offenseTarget" min="1" max="99" value="70"></label>
       <div class="result">Cost: <span id="offenseCost">0</span></div>
     </div>
-
     <div>
       <h3>Defense</h3>
       <label>Current Rating: <input type="number" id="defenseCurrent" min="0" max="98" value="60"></label>
       <label>Target Rating: <input type="number" id="defenseTarget" min="1" max="99" value="70"></label>
       <div class="result">Cost: <span id="defenseCost">0</span></div>
     </div>
-
     <div>
       <h3>Athleticism</h3>
       <label>Current Rating: <input type="number" id="athleticCurrent" min="0" max="98" value="60"></label>
       <label>Target Rating: <input type="number" id="athleticTarget" min="1" max="99" value="70"></label>
       <div class="result">Cost: <span id="athleticCost">0</span></div>
     </div>
-
     <div>
       <h3>Mental</h3>
       <label>Current Rating: <input type="number" id="mentalCurrent" min="0" max="98" value="60"></label>
       <label>Target Rating: <input type="number" id="mentalTarget" min="1" max="99" value="70"></label>
       <div class="result">Cost: <span id="mentalCost">0</span></div>
     </div>
-
     <button onclick="calculateAllUpgrades()">Calculate All Upgrade Costs</button>
   </div>
 </div>
@@ -212,17 +265,23 @@
   function calculateTotalPoints() {
     const form = document.forms['statsForm'];
     let earned = 0;
-
     for (let key in pointValues) {
       let val = parseInt(form[key].value) || 0;
       earned += val * pointValues[key];
     }
 
+    // Bonus multipliers
+    const resultMult = parseFloat(document.getElementById('resultMultiplier').value);
+    const oppMult = parseFloat(document.getElementById('opponentMultiplier').value);
+    const seasonMult = parseFloat(document.getElementById('seasonMultiplier').value);
+
+    const finalPoints = Math.round(earned * resultMult * oppMult * seasonMult);
+
     const bank = document.getElementById('manualTotalPoints');
-    const newTotal = parseInt(bank.value) + earned;
+    const newTotal = parseInt(bank.value) + finalPoints;
     bank.value = newTotal;
 
-    document.getElementById('pointsEarned').innerText = earned;
+    document.getElementById('pointsEarned').innerText = finalPoints;
     document.getElementById('pointsBankDisplay').innerText = newTotal;
   }
 
@@ -245,6 +304,11 @@
 
       display.innerText = cost;
     }
+  }
+
+  function toggleBonusInfo() {
+    const info = document.getElementById('bonusInfo');
+    info.style.display = info.style.display === 'none' ? 'block' : 'none';
   }
 
   function exportData() {
