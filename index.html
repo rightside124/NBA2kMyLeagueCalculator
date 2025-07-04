@@ -142,6 +142,10 @@
     <input type="file" id="fileInput" accept=".json" onchange="handleFile(event)" />
     <button onclick="showApp('nba2k')">NBA 2K23 MyCareer Tool</button>
     <button onclick="showApp('bbgm')">BBGM MyCareer Upgrade Simulator</button>
+    <button onclick="redirectToBBGM()"><i class="fas fa-chart-line"></i> Open BBGM</button>
+    <a href="https://discord.gg/5nPgxUn3H2" target="_blank" style="text-decoration:none;">
+      <button><i class="fab fa-discord"></i> Join BBGM Discord</button>
+    </a>
   </div>
 
   <div class="app-section" id="nba2kApp">
@@ -1038,6 +1042,83 @@
       p.style.top = Math.random() * -100 + 'vh';
       p.style.animationDuration = (5 + Math.random() * 10) + 's';
       document.getElementById('space-bg').appendChild(p);
+    }
+  </script>
+
+  <script>
+    function showApp(id) {
+      document.getElementById("mainMenu").classList.remove("active");
+      document.querySelectorAll(".app-section").forEach(el => el.classList.remove("active"));
+      document.getElementById(id + "App").classList.add("active");
+    }
+
+    function backToMenu() {
+      document.getElementById("mainMenu").classList.add("active");
+      document.querySelectorAll(".app-section").forEach(el => el.classList.remove("active"));
+    }
+
+    function redirectToBBGM() {
+      window.open("https://play.basketball-gm.com", "_blank");
+    }
+
+    function handleFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          const player = data.players?.[0];
+          if (!player) return alert("No player data found.");
+
+          const stats = player.stats.find(s => !s.playoffs);
+          const gp = stats?.gp || 0;
+          const pts = stats?.pts || 0;
+          const reb = (stats?.drb || 0) + (stats?.orb || 0);
+          const ast = stats?.ast || 0;
+          const stl = stats?.stl || 0;
+          const blk = stats?.blk || 0;
+          const tov = stats?.tov || 0;
+          const pf = stats?.pf || 0;
+          const gpm = stats?.pm || 0;
+
+          const gpts = Math.round((pts * 2) + (reb * 5) + (ast * 5) + (stl * 10) + (blk * 10) - (tov * 2) - (pf * 1) + (gpm * 5));
+          const gameBonus = gp * 1000;
+
+          const additional = prompt("How many bonus points since last save?", "0");
+          const total = gpts + gameBonus + parseInt(additional || 0);
+
+          document.getElementById("bbgmResult").innerHTML = `
+            <h2>BBGM Stats Loaded</h2>
+            <p>Games Played: ${gp}</p>
+            <p>Total Stat-Based Points: ${gpts}</p>
+            <p>+ Game Bonus: ${gameBonus}</p>
+            <p><strong>Total Points Earned: ${total}</strong></p>
+          `;
+
+          localStorage.setItem("mycareerData", JSON.stringify({ gp, gpts, gameBonus, total }));
+
+          showApp("bbgm");
+        } catch (err) {
+          alert("Invalid JSON file.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function loadFromLocal() {
+      const data = localStorage.getItem("mycareerData");
+      if (data) {
+        const { gp, gpts, gameBonus, total } = JSON.parse(data);
+        document.getElementById("bbgmResult").innerHTML = `
+          <h2>Last BBGM Save</h2>
+          <p>Games Played: ${gp}</p>
+          <p>Stat Points: ${gpts}</p>
+          <p>Game Bonus: ${gameBonus}</p>
+          <p><strong>Total: ${total}</strong></p>
+        `;
+      }
     }
   </script>
 </body>
