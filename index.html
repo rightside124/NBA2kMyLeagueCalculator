@@ -169,6 +169,66 @@
       display: none;
     }
 
+    /* Custom Checkbox (Toggle Switch) Styles */
+    .checkbox-container {
+      display: inline-block;
+      position: relative;
+      padding-left: 45px; /* Space for the custom checkbox */
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      font-weight: normal; /* Override bold from h3 */
+      color: var(--text);
+    }
+
+    /* Hide the browser's default checkbox */
+    .checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    /* The slider (checkmark) */
+    .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 26px;
+      width: 40px;
+      background-color: var(--bg);
+      border-radius: 13px;
+      transition: background-color 0.2s;
+    }
+
+    /* The slider handle */
+    .checkmark:before {
+      content: "";
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    /* When the checkbox is checked, add a blue background */
+    .checkbox-container input:checked + .checkmark {
+      background-color: var(--accent);
+    }
+
+    /* Move the slider handle when checked */
+    .checkbox-container input:checked + .checkmark:before {
+      transform: translateX(14px);
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .app-container {
@@ -301,30 +361,54 @@
       <div class="panel">
         <h2>Attribute Upgrade Cost</h2>
         <div>
-          <h3><input type="checkbox" id="nba2k_useOffense" checked> Offense</h3>
-          <label>Current Rating: <input type="number" id="nba2k_offenseCurrent" value="60"></label>
-          <label>Target Rating: <input type="number" id="nba2k_offenseTarget" value="70"></label>
+          <h3>
+            <label class="checkbox-container">
+              <input type="checkbox" id="nba2k_useOffense" checked onchange="calculateAllUpgrades('nba2k')">
+              <span class="checkmark"></span>
+              Offense
+            </label>
+          </h3>
+          <label>Current Rating: <input type="number" id="nba2k_offenseCurrent" value="60" onchange="calculateAllUpgrades('nba2k')"></label>
+          <label>Target Rating: <input type="number" id="nba2k_offenseTarget" value="70" onchange="calculateAllUpgrades('nba2k')"></label>
           <div class="result">Cost: <span id="nba2k_offenseCost">0</span></div>
         </div>
 
         <div>
-          <h3><input type="checkbox" id="nba2k_useDefense" checked> Defense</h3>
-          <label>Current Rating: <input type="number" id="nba2k_defenseCurrent" value="60"></label>
-          <label>Target Rating: <input type="number" id="nba2k_defenseTarget" value="70"></label>
+          <h3>
+            <label class="checkbox-container">
+              <input type="checkbox" id="nba2k_useDefense" checked onchange="calculateAllUpgrades('nba2k')">
+              <span class="checkmark"></span>
+              Defense
+            </label>
+          </h3>
+          <label>Current Rating: <input type="number" id="nba2k_defenseCurrent" value="60" onchange="calculateAllUpgrades('nba2k')"></label>
+          <label>Target Rating: <input type="number" id="nba2k_defenseTarget" value="70" onchange="calculateAllUpgrades('nba2k')"></label>
           <div class="result">Cost: <span id="nba2k_defenseCost">0</span></div>
         </div>
 
         <div>
-          <h3><input type="checkbox" id="nba2k_useAthletic" checked> Athleticism</h3>
-          <label>Current Rating: <input type="number" id="nba2k_athleticCurrent" value="60"></label>
-          <label>Target Rating: <input type="number" id="nba2k_athleticTarget" value="70"></label>
+          <h3>
+            <label class="checkbox-container">
+              <input type="checkbox" id="nba2k_useAthletic" checked onchange="calculateAllUpgrades('nba2k')">
+              <span class="checkmark"></span>
+              Athleticism
+            </label>
+          </h3>
+          <label>Current Rating: <input type="number" id="nba2k_athleticCurrent" value="60" onchange="calculateAllUpgrades('nba2k')"></label>
+          <label>Target Rating: <input type="number" id="nba2k_athleticTarget" value="70" onchange="calculateAllUpgrades('nba2k')"></label>
           <div class="result">Cost: <span id="nba2k_athleticCost">0</span></div>
         </div>
 
         <div>
-          <h3><input type="checkbox" id="nba2k_useMental" checked> Mental</h3>
-          <label>Current Rating: <input type="number" id="nba2k_mentalCurrent" value="60"></label>
-          <label>Target Rating: <input type="number" id="nba2k_mentalTarget" value="70"></label>
+          <h3>
+            <label class="checkbox-container">
+              <input type="checkbox" id="nba2k_useMental" checked onchange="calculateAllUpgrades('nba2k')">
+              <span class="checkmark"></span>
+              Mental
+            </label>
+          </h3>
+          <label>Current Rating: <input type="number" id="nba2k_mentalCurrent" value="60" onchange="calculateAllUpgrades('nba2k')"></label>
+          <label>Target Rating: <input type="number" id="nba2k_mentalTarget" value="70" onchange="calculateAllUpgrades('nba2k')"></label>
           <div class="result">Cost: <span id="nba2k_mentalCost">0</span></div>
         </div>
 
@@ -332,7 +416,7 @@
         <div class="result" id="nba2k_upgradeSummary"></div>
         <button onclick="confirmUpgrade('nba2k')">Confirm Upgrade</button>
         <label>Price Multiplier:
-          <select id="nba2k_priceMultiplier">
+          <select id="nba2k_priceMultiplier" onchange="calculateAllUpgrades('nba2k')">
             <option value="1">Not Valuable (1×)</option>
             <option value="2">Valuable (2×)</option>
             <option value="3">Very Valuable (3×)</option>
@@ -432,23 +516,41 @@
       <div class="panel">
         <h2>Attribute Upgrade Cost</h2>
         <div>
-          <h3><input type="checkbox" id="bbgm_useOffense" checked> Offense</h3>
-          <label>Current Rating: <input type="number" id="bbgm_offenseCurrent" value="60"></label>
-          <label>Target Rating: <input type="number" id="bbgm_offenseTarget" value="70"></label>
+          <h3>
+            <label class="checkbox-container">
+              <input type="checkbox" id="bbgm_useOffense" checked onchange="calculateAllUpgrades('bbgm')">
+              <span class="checkmark"></span>
+              Offense
+            </label>
+          </h3>
+          <label>Current Rating: <input type="number" id="bbgm_offenseCurrent" value="60" onchange="calculateAllUpgrades('bbgm')"></label>
+          <label>Target Rating: <input type="number" id="bbgm_offenseTarget" value="70" onchange="calculateAllUpgrades('bbgm')"></label>
           <div class="result">Cost: <span id="bbgm_offenseCost">0</span></div>
         </div>
 
         <div>
-          <h3><input type="checkbox" id="bbgm_useAthletic" checked> Athleticism</h3>
-          <label>Current Rating: <input type="number" id="bbgm_athleticCurrent" value="60"></label>
-          <label>Target Rating: <input type="number" id="bbgm_athleticTarget" value="70"></label>
+          <h3>
+            <label class="checkbox-container">
+              <input type="checkbox" id="bbgm_useAthletic" checked onchange="calculateAllUpgrades('bbgm')">
+              <span class="checkmark"></span>
+              Athleticism
+            </label>
+          </h3>
+          <label>Current Rating: <input type="number" id="bbgm_athleticCurrent" value="60" onchange="calculateAllUpgrades('bbgm')"></label>
+          <label>Target Rating: <input type="number" id="bbgm_athleticTarget" value="70" onchange="calculateAllUpgrades('bbgm')"></label>
           <div class="result">Cost: <span id="bbgm_athleticCost">0</span></div>
         </div>
 
         <div>
-          <h3><input type="checkbox" id="bbgm_useSkill" checked> Skill</h3>
-          <label>Current Rating: <input type="number" id="bbgm_skillCurrent" value="60"></label>
-          <label>Target Rating: <input type="number" id="bbgm_skillTarget" value="70"></label>
+          <h3>
+            <label class="checkbox-container">
+              <input type="checkbox" id="bbgm_useSkill" checked onchange="calculateAllUpgrades('bbgm')">
+              <span class="checkmark"></span>
+              Skill
+            </label>
+          </h3>
+          <label>Current Rating: <input type="number" id="bbgm_skillCurrent" value="60" onchange="calculateAllUpgrades('bbgm')"></label>
+          <label>Target Rating: <input type="number" id="bbgm_skillTarget" value="70" onchange="calculateAllUpgrades('bbgm')"></label>
           <div class="result">Cost: <span id="bbgm_skillCost">0</span></div>
         </div>
 
@@ -456,7 +558,7 @@
         <div class="result" id="bbgm_upgradeSummary"></div>
         <button onclick="confirmUpgrade('bbgm')">Confirm Upgrade</button>
         <label>Price Multiplier:
-          <select id="bbgm_priceMultiplier">
+          <select id="bbgm_priceMultiplier" onchange="calculateAllUpgrades('bbgm')">
             <option value="1">Not Valuable (1×)</option>
             <option value="2">Valuable (2×)</option>
             <option value="3">Very Valuable (3×)</option>
