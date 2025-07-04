@@ -269,6 +269,7 @@
       <button><i class="fab fa-discord"></i> Join BBGM Discord</button>
     </a>
     <button onclick="toggleDarkMode()">🌓 Toggle Dark Mode</button>
+    <button onclick="showManual()">📚 Show Manual</button>
   </div>
 
   <!-- NBA 2K23 App Section -->
@@ -437,6 +438,10 @@
           <input type="file" class="file-input" id="bbgm_importFile" accept=".json">
           <button onclick="document.getElementById('bbgm_importFile').click()">📂 Import JSON</button>
         </label>
+        <label>
+            <input type="file" class="file-input" id="bbgm_playerImportFile" accept=".json" onchange="handleBBGMPlayerFile(event)">
+            <button onclick="document.getElementById('bbgm_playerImportFile').click()">⛹️ Export BBGM Player & Convert Points</button>
+        </label>
         <button onclick="backToMenu()">⬅ Back to Menu</button>
       </div>
     </div>
@@ -450,46 +455,33 @@
 
       <div class="panel">
         <h2>Bonus Multipliers</h2>
-        <label>Game Result:
-          <select id="bbgm_gameResult">
+        <label>Regular Season Wins:
+          <select id="bbgm_winsCategory">
             <option value="">- Select Here -</option>
-            <option value="win">Win</option>
-            <option value="otwin">OT Win</option>
-            <option value="lose">Lose</option>
-            <option value="otlose">OT Lose</option>
+            <option value="1">0-20 Wins (1×)</option>
+            <option value="1.25">21-40 Wins (1.25×)</option>
+            <option value="1.5">41-50 Wins (1.5×)</option>
+            <option value="1.75">51-60 Wins (1.75×)</option>
+            <option value="2">61+ Wins (2×)</option>
           </select>
         </label>
-        <div id="bbgm_otCountBox" style="display:none;">
-          <label>Overtime Count (1–6):
-            <input type="number" id="bbgm_otCount" min="1" max="6" value="1"></label>
-        </div>
-        <label>Opponent Type:
-          <select id="bbgm_opponentType">
+        <label>Playoff Performance:
+          <select id="bbgm_playoffPerformance">
             <option value="">- Select Here -</option>
-            <option value="1">Easy Opponent</option>
-            <option value="1.25">Normal Opponent</option>
-            <option value="1.5">Hard Opponent</option>
-            <option value="1.75">1st in Conference</option>
-            <option value="2">1st/2nd in League</option>
-            <option value="3">All-Star Game</option>
-          </select>
-        </label>
-        <label>Team Last Season:
-          <select id="bbgm_teamHistory">
-            <option value="">- Select Here -</option>
-            <option value="1">Did Not Make Playoffs</option>
-            <option value="1.25">1st Round</option>
-            <option value="1.5">2nd Round</option>
-            <option value="1.75">Semifinalist</option>
-            <option value="1.9">Finalist</option>
-            <option value="2">Defending Champions</option>
+            <option value="1">Not in Playoffs (1×)</option>
+            <option value="1.5">Play-in (1.5×)</option>
+            <option value="1">Play-in Exit (1×)</option>
+            <option value="1.15">1st Round Exit (1.15×)</option>
+            <option value="1.35">2nd Round Exit (1.35×)</option>
+            <option value="1.55">Conf. Finals Exit (1.55×)</option>
+            <option value="1.75">Finals Exit (1.75×)</option>
+            <option value="2">Champions (2×)</option>
           </select>
         </label>
         <button onclick="toggleMultiplierInfo('bbgm')">ℹ️ Explanation</button>
         <div id="bbgm_multiplierInfo" style="display:none; margin-top:10px;">
-          <p><strong>Game Result:</strong> Win ×1.5, OT Win adds +0.1 per OT (max 6), OT Lose ×1.25</p>
-          <p><strong>Opponent:</strong> Easy×1, Normal×1.25, Hard×1.5, 1st in Conf×1.75, Top‑2×2, All‑Star×3</p>
-          <p><strong>Team History:</strong> No Playoffs×1, 1stRn×1.25, 2ndRn×1.5, Semis×1.75, Finals×1.9, Champs×2</p>
+          <p><strong>Regular Season Wins:</strong> 0-20 (1×), 21-40 (1.25×), 41-50 (1.5×), 51-60 (1.75×), 61+ (2×)</p>
+          <p><strong>Playoff Performance:</strong> Not in Playoffs (1×), Play-in (1.5×), 1st Round Exit (1.15×), 2nd Round Exit (1.35×), Conf. Finals Exit (1.55×), Finals Exit (1.75×), Champions (2×)</p>
         </div>
         <label><input type="checkbox" id="bbgm_disablePointAdd"> Don't add to total bank</label>
       </div>
@@ -522,7 +514,7 @@
             <label class="checkbox-container">
               <input type="checkbox" id="bbgm_useOffense" checked>
               <span class="checkmark"></span>
-              Offense
+              Offensive
             </label>
           </h3>
           <label>Current Rating: <input type="number" id="bbgm_offenseCurrent" value="60"></label>
@@ -559,18 +551,103 @@
         <button onclick="calculateAllUpgrades('bbgm')">Calculate All Upgrade Costs</button>
         <div class="result" id="bbgm_upgradeSummary"></div>
         <button onclick="confirmUpgrade('bbgm')">Confirm Upgrade</button>
-        <label>Price Multiplier:
-          <select id="bbgm_priceMultiplier">
-            <option value="1">Not Valuable (1×)</option>
-            <option value="2">Valuable (2×)</option>
-            <option value="3">Very Valuable (3×)</option>
-          </select>
-        </label>
+        <!-- Price Multiplier removed as per request -->
       </div>
     </div>
   </div>
 
+  <!-- Manual Section -->
+  <div class="app-section" id="manualApp">
+    <div class="top-bar">
+      <h1>📚 How to Use MyCareer Tools</h1>
+      <button onclick="backToMenu()">⬅ Back to Menu</button>
+    </div>
+    <div class="app-container">
+      <div class="panel">
+        <h2>General Usage</h2>
+        <ul>
+          <li><strong>Import/Export JSON:</strong> You can save and load your progress for both NBA 2K23 and BBGM simulators using the "Export JSON" and "Import JSON" buttons. This allows you to resume your work later or share your data.</li>
+          <li><strong>Toggle Dark Mode:</strong> Switch between dark and light themes for a comfortable viewing experience.</li>
+          <li>
+            <label class="checkbox-container">
+              <input type="checkbox" id="showTutorialOnStartup">
+              <span class="checkmark"></span>
+              Add tutorial when opening app (appears once)
+            </label>
+            <p style="font-size: 0.9em; margin-top: 5px; color: var(--text);">
+              Check this box if you want this manual to automatically show up the next time you open the app. It will only appear once after checking.
+            </p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h2>NBA 2K23 MyCareer Tool</h2>
+        <ul>
+          <li><strong>Points Bank:</strong> Manually adjust your total points.</li>
+          <li><strong>Bonus Multipliers:</strong> Select game results, opponent type, and team history to calculate bonus points earned per game. An explanation is available by clicking the "ℹ️ Explanation" button.</li>
+          <li><strong>Game Stats:</strong> Input your in-game statistics to calculate points earned from a single game.</li>
+          <li><strong>Attribute Upgrade Cost:</strong>
+            <ul>
+              <li>Enter your "Current Rating" and "Target Rating" for Offense, Defense, Athleticism, and Mental attributes.</li>
+              <li>Use the checkboxes to include/exclude specific attribute categories from the calculation.</li>
+              <li>Click "Calculate All Upgrade Costs" to see the total cost and your points balance after upgrades.</li>
+              <li>"Price Multiplier" allows you to adjust the cost based on the attribute's perceived value.</li>
+              <li>"Confirm Upgrade" will deduct the calculated cost from your points bank.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h2>BBGM MyCareer Upgrade Simulator</h2>
+        <ul>
+          <li><strong>Points Bank:</strong> Manually adjust your total points.</li>
+          <li><strong>Bonus Multipliers:</strong>
+            <ul>
+              <li><strong>Regular Season Wins:</strong> Select a category based on your team's total regular season wins to apply a multiplier to your earned points.</li>
+              <li><strong>Playoff Performance:</strong> Choose your team's playoff outcome for another multiplier.</li>
+              <li>An explanation of these multipliers is available via the "ℹ️ Explanation" button.</li>
+            </ul>
+          </li>
+          <li><strong>Game Stats:</strong> Input your in-game statistics to calculate points earned from a single game.</li>
+          <li><strong>Export BBGM Player & Convert Points:</strong> This special feature allows you to:
+            <ol>
+              <li>Click the "⛹️ Export BBGM Player & Convert Points" button.</li>
+              <li>Select a BBGM player JSON file from your computer.</li>
+              <li>If the player has stats from multiple seasons, a modal will appear asking you to select which season (Regular Season or Playoffs) you want to convert.</li>
+              <li>The selected season's stats (2PT, 3PT, FT, REB, AST, STL, BLK, TOV, PF, PM, GP, MIN) will be converted into points and added to your "Total Points Bank".</li>
+            </ol>
+          </li>
+          <li><strong>Attribute Upgrade Cost:</strong>
+            <ul>
+              <li>Enter your "Current Rating" and "Target Rating" for Offensive, Athleticism, and Skill attributes.</li>
+              <li>Use the checkboxes to include/exclude specific attribute categories.</li>
+              <li>Click "Calculate All Upgrade Costs" to see the total cost and your points balance after upgrades.</li>
+              <li>**Note:** The "Price Multiplier" is not used in the BBGM simulator. Costs are based on individual attribute values, with "valuable" attributes (3PT, Offensive IQ, Defensive IQ) having a 1.5x multiplier.</li>
+              <li>"Confirm Upgrade" will deduct the calculated cost from your points bank.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Modal for Season Selection -->
+  <div id="seasonSelectModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1001; display:flex; align-items:center; justify-content:center;">
+      <div style="background:var(--section); padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.7); text-align:center; max-width:90vw; max-height:80vh; overflow-y:auto;">
+          <h2 style="color:var(--accent); margin-bottom:15px;">Select Season to Convert</h2>
+          <div id="seasonList" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px;">
+              <!-- Season buttons will be inserted here by JS -->
+          </div>
+          <button onclick="document.getElementById('seasonSelectModal').style.display='none';" style="margin-top:20px;">Cancel</button>
+      </div>
+  </div>
+
   <script>
+    const VALUABLE_MULTIPLIER = 1.5; // Multiplier for valuable attributes (3pt, OIQ, DIQ)
+    const PLAYOFF_POINTS_MULTIPLIER = 1.1; // New multiplier for playoff stats points
+
     // Define point values and upgrade costs for both apps
     const appData = {
       nba2k: {
@@ -582,7 +659,7 @@
           offense: r => (r < 60 ? 25 : r <= 79 ? 40 : r <= 89 ? 70 : r <= 94 ? 125 : 50),
           mental: r => (r < 60 ? 25 : r <= 79 ? 37 : r <= 89 ? 68 : r <= 94 ? 120 : 45),
           defense: r => (r < 60 ? 25 : r <= 79 ? 51 : r <= 89 ? 85 : r <= 94 ? 135 : 75),
-          athletic: r => (r < 60 ? 30 : r <= 79 ? 65 : r <= 89 ? 105 : r <= 94 ? 155 : 100) // Changed 'athleticism' to 'athletic'
+          athletic: r => (r < 60 ? 30 : r <= 79 ? 65 : r <= 89 ? 105 : r <= 94 ? 155 : 100)
         },
         upgradeCategories: [
           { key: 'offense', useId: 'useOffense', baseMultiplier: 1.25 },
@@ -592,19 +669,65 @@
         ]
       },
       bbgm: {
-        pointValues: {
-          gpts: 2, greb: 5, gast: 5, gstl: 10, gblk: 10,
-          g2pt: 2, g3pt: 3, gfts: 1, gtov: -2, gfls: -1, gpm: 5, gm: 1
+        // Point values for converting player stats to points
+        statConversionPoints: {
+            twoPointersMade: 2,
+            threePointersMade: 3,
+            freeThrowsMade: 1,
+            reb: 1,
+            ast: 1.5,
+            stl: 2,
+            blk: 2,
+            tov: -1,
+            pf: -0.5, // Using 'pf' from BBGM JSON
+            pm: 0.2,
+            gp: 1000,
+            min: 0.1
         },
-        upgradeCostPerPoint: {
-          offense: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
-          athletic: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274), // Changed 'athleticism' to 'athletic'
-          skill: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347)
+        // New multipliers based on season performance
+        winsMultipliers: {
+            '0-20': 1,
+            '21-40': 1.25,
+            '41-50': 1.5,
+            '51-60': 1.75,
+            '61+': 2
+        },
+        playoffMultipliers: {
+            'not_in_playoffs': 1,
+            'play_in': 1.5,
+            'play_in_exit': 1,
+            '1st_round_exit': 1.15,
+            '2nd_round_exit': 1.35,
+            'conf_finals_exit': 1.55,
+            'finals_exit': 1.75,
+            'champions': 2
+        },
+        // Upgrade costs per individual attribute
+        upgradeCostPerAttribute: {
+            // Athleticism: stre, spd, jmp, endu
+            stre: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
+            spd: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
+            jmp: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
+            endu: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
+
+            // Offensive: ins, dnk, ft, fg, tp
+            ins: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
+            dnk: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
+            ft: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
+            fg: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
+            tp: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209) * VALUABLE_MULTIPLIER, // Valuable attribute
+
+            // Skill: oiq, diq, drb, pss, reb
+            oiq: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347) * VALUABLE_MULTIPLIER, // Valuable attribute
+            diq: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347) * VALUABLE_MULTIPLIER, // Valuable attribute
+            drb: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
+            pss: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
+            reb: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
         },
         upgradeCategories: [
-          { key: 'offense', useId: 'useOffense', baseMultiplier: 1.25 },
-          { key: 'athletic', useId: 'useAthletic', baseMultiplier: 2.5 },
-          { key: 'skill', useId: 'useSkill', baseMultiplier: 3.0 }
+          { key: 'offense', useId: 'useOffense', attributes: ['ins', 'dnk', 'ft', 'fg', 'tp'] },
+          { key: 'athletic', useId: 'useAthletic', attributes: ['stre', 'spd', 'jmp', 'endu'] },
+          { key: 'skill', useId: 'useSkill', attributes: ['oiq', 'diq', 'drb', 'pss', 'reb'] }
         ]
       }
     };
@@ -615,18 +738,20 @@
       return {
         manualTotalPoints: document.getElementById(`${prefix}manualTotalPoints`),
         pointsBankDisplay: document.getElementById(`${prefix}pointsBankDisplay`),
-        gameResult: document.getElementById(`${prefix}gameResult`),
-        otCountBox: document.getElementById(`${prefix}otCountBox`),
-        otCount: document.getElementById(`${prefix}otCount`),
-        opponentType: document.getElementById(`${prefix}opponentType`),
-        teamHistory: document.getElementById(`${prefix}teamHistory`),
+        gameResult: document.getElementById(`${prefix}gameResult`), // Old, but still referenced in NBA2K
+        otCountBox: document.getElementById(`${prefix}otCountBox`), // Old, but still referenced in NBA2K
+        otCount: document.getElementById(`${prefix}otCount`), // Old, but still referenced in NBA2K
+        opponentType: document.getElementById(`${prefix}opponentType`), // Old, but still referenced in NBA2K
+        teamHistory: document.getElementById(`${prefix}teamHistory`), // Old, but still referenced in NBA2K
+        winsCategory: document.getElementById(`${prefix}winsCategory`), // New for BBGM
+        playoffPerformance: document.getElementById(`${prefix}playoffPerformance`), // New for BBGM
         multiplierInfo: document.getElementById(`${prefix}multiplierInfo`),
         disablePointAdd: document.getElementById(`${prefix}disablePointAdd`),
         statsForm: document.getElementById(`${prefix}statsForm`),
         basePointsIncrease: document.getElementById(`${prefix}basePointsIncrease`),
         pointsEarned: document.getElementById(`${prefix}pointsEarned`),
         upgradeSummary: document.getElementById(`${prefix}upgradeSummary`),
-        priceMultiplier: document.getElementById(`${prefix}priceMultiplier`),
+        priceMultiplier: document.getElementById(`${prefix}priceMultiplier`), // Still exists for NBA2K
         getUpgradeElements: (categoryKey) => {
           const categoryConfig = appData[appId].upgradeCategories.find(c => c.key === categoryKey);
           if (!categoryConfig) {
@@ -653,22 +778,33 @@
             elements.manualTotalPoints.addEventListener('change', () => updatePointsBankDisplay(appId));
         }
 
-        // Bonus Multipliers
-        if (elements.gameResult) {
-            elements.gameResult.addEventListener('change', () => {
-                toggleOTBox(appId);
-                calculateTotalPoints(appId);
-            });
+        // Bonus Multipliers (NBA2K specific)
+        if (appId === 'nba2k') {
+            if (elements.gameResult) {
+                elements.gameResult.addEventListener('change', () => {
+                    toggleOTBox(appId);
+                    calculateTotalPoints(appId);
+                });
+            }
+            if (elements.otCount) {
+                elements.otCount.addEventListener('change', () => calculateTotalPoints(appId));
+            }
+            if (elements.opponentType) {
+                elements.opponentType.addEventListener('change', () => calculateTotalPoints(appId));
+            }
+            if (elements.teamHistory) {
+                elements.teamHistory.addEventListener('change', () => calculateTotalPoints(appId));
+            }
+        } else if (appId === 'bbgm') {
+            // New BBGM multipliers
+            if (elements.winsCategory) {
+                elements.winsCategory.addEventListener('change', () => calculateTotalPoints(appId));
+            }
+            if (elements.playoffPerformance) {
+                elements.playoffPerformance.addEventListener('change', () => calculateTotalPoints(appId));
+            }
         }
-        if (elements.otCount) {
-            elements.otCount.addEventListener('change', () => calculateTotalPoints(appId));
-        }
-        if (elements.opponentType) {
-            elements.opponentType.addEventListener('change', () => calculateTotalPoints(appId));
-        }
-        if (elements.teamHistory) {
-            elements.teamHistory.addEventListener('change', () => calculateTotalPoints(appId));
-        }
+
         if (elements.disablePointAdd) {
             elements.disablePointAdd.addEventListener('change', () => calculateTotalPoints(appId));
         }
@@ -685,9 +821,11 @@
         }
 
         // Attribute Upgrade Cost inputs and checkboxes
-        if (elements.priceMultiplier) {
+        // Only attach for NBA2K if priceMultiplier exists
+        if (appId === 'nba2k' && elements.priceMultiplier) {
             elements.priceMultiplier.addEventListener('change', () => calculateAllUpgrades(appId));
         }
+
 
         appData[appId].upgradeCategories.forEach(category => {
             const upgradeElements = elements.getUpgradeElements(category.key);
@@ -707,10 +845,13 @@
         if (importFileInput) {
             importFileInput.addEventListener('change', (event) => importData(event, appId));
         }
-        // Main menu file input
-        const mainMenuFileInput = document.getElementById('fileInput');
-        if (mainMenuFileInput) {
-            mainMenuFileInput.addEventListener('change', (event) => handleFile(event));
+
+        // Manual tutorial checkbox
+        const showTutorialCheckbox = document.getElementById('showTutorialOnStartup');
+        if (showTutorialCheckbox) {
+            showTutorialCheckbox.addEventListener('change', (event) => {
+                saveToLocal('showTutorialOnStartup', event.target.checked);
+            });
         }
     }
 
@@ -720,12 +861,14 @@
       saveToLocal('darkMode', document.body.classList.contains('light-mode'));
     }
 
-    // Toggles the overtime count input box visibility
+    // Toggles the overtime count input box visibility (NBA2K only)
     function toggleOTBox(appId) {
-      const elements = getAppElements(appId);
-      if (elements.otCountBox && elements.gameResult) {
-        elements.otCountBox.style.display =
-          elements.gameResult.value === "otwin" ? "block" : "none";
+      if (appId === 'nba2k') {
+        const elements = getAppElements(appId);
+        if (elements.otCountBox && elements.gameResult) {
+          elements.otCountBox.style.display =
+            elements.gameResult.value === "otwin" ? "block" : "none";
+        }
       }
     }
 
@@ -765,22 +908,37 @@
       const baseIncrease = parseInt(elements.basePointsIncrease?.value || '0') || 0;
       earned += baseIncrease;
 
-      const result = elements.gameResult?.value || '';
-      const opp = parseFloat(elements.opponentType?.value) || 1;
-      const team = parseFloat(elements.teamHistory?.value) || 1;
-      const disable = elements.disablePointAdd?.checked || false;
+      let finalMultiplier = 1;
 
-      let multiplier = 1;
-      if (result === "win") multiplier = 1.5;
-      else if (result === "otwin") {
-        const ot = Math.min(6, parseInt(elements.otCount?.value || '1') || 1);
-        multiplier = 1.5 + (0.1 * ot);
-      } else if (result === "otlose") multiplier = 1.25;
+      if (appId === 'nba2k') {
+          const result = elements.gameResult?.value || '';
+          const opp = parseFloat(elements.opponentType?.value) || 1;
+          const team = parseFloat(elements.teamHistory?.value) || 1;
 
-      const total = Math.round(earned * multiplier * opp * team);
+          let gameResultMultiplier = 1;
+          if (result === "win") gameResultMultiplier = 1.5;
+          else if (result === "otwin") {
+            const ot = Math.min(6, parseInt(elements.otCount?.value || '1') || 1);
+            gameResultMultiplier = 1.5 + (0.1 * ot);
+          } else if (result === "otlose") gameResultMultiplier = 1.25;
+
+          finalMultiplier = gameResultMultiplier * opp * team;
+
+      } else if (appId === 'bbgm') {
+          const winsCategory = elements.winsCategory?.value || '';
+          const playoffPerformance = elements.playoffPerformance?.value || '';
+
+          const winsMultiplier = parseFloat(appSpecificData.winsMultipliers[winsCategory]) || 1;
+          const playoffMultiplier = parseFloat(appSpecificData.playoffMultipliers[playoffPerformance]) || 1;
+
+          finalMultiplier = winsMultiplier * playoffMultiplier;
+      }
+
+
+      const total = Math.round(earned * finalMultiplier);
       const bankInput = elements.manualTotalPoints;
       const currentBankValue = parseInt(bankInput?.value || '0') || 0;
-      const newTotal = disable ? currentBankValue : currentBankValue + total;
+      const newTotal = elements.disablePointAdd?.checked ? currentBankValue : currentBankValue + total;
 
       if (bankInput) bankInput.value = newTotal;
       if (elements.pointsBankDisplay) elements.pointsBankDisplay.innerText = newTotal;
@@ -796,7 +954,8 @@
 
       let totalCost = 0;
       const bank = parseInt(elements.manualTotalPoints?.value || '0') || 0;
-      const priceMultiplier = parseFloat(elements.priceMultiplier?.value) || 1;
+      // Price multiplier only for NBA2K
+      const priceMultiplier = (appId === 'nba2k' ? parseFloat(elements.priceMultiplier?.value) : 1) || 1;
 
       for (let category of appSpecificData.upgradeCategories) {
         const upgradeElements = elements.getUpgradeElements(category.key);
@@ -819,22 +978,49 @@
           continue;
         }
 
-        let cost = 0;
-        // Ensure that appSpecificData.upgradeCostPerPoint[category.key] is a function before calling it
-        if (typeof appSpecificData.upgradeCostPerPoint[category.key] === 'function') {
-            for (let i = actualCurrent + 1; i <= actualTarget; i++) {
-                let baseCost = appSpecificData.upgradeCostPerPoint[category.key](i);
-                cost += baseCost * category.baseMultiplier * priceMultiplier;
+        let categoryTotalCost = 0;
+
+        if (appId === 'nba2k') {
+            // NBA2K logic: uses upgradeCostPerPoint directly for the category
+            if (typeof appSpecificData.upgradeCostPerPoint[category.key] === 'function') {
+                for (let i = actualCurrent + 1; i <= actualTarget; i++) {
+                    let baseCost = appSpecificData.upgradeCostPerPoint[category.key](i);
+                    categoryTotalCost += baseCost * category.baseMultiplier * priceMultiplier;
+                }
+            } else {
+                console.error(`Error: upgradeCostPerPoint for category '${category.key}' is not a function for NBA2K.`);
+                if (display) display.innerText = "Error";
+                continue;
             }
-        } else {
-            console.error(`Error: upgradeCostPerPoint for category '${category.key}' is not a function.`);
-            if (display) display.innerText = "Error"; // Indicate an error in the UI
-            continue; // Skip this category to prevent further errors
+        } else if (appId === 'bbgm') {
+            // BBGM logic: sums costs of individual attributes within the category
+            if (category.attributes && category.attributes.length > 0) {
+                for (const attrKey of category.attributes) {
+                    if (typeof appSpecificData.upgradeCostPerAttribute[attrKey] === 'function') {
+                        for (let i = actualCurrent + 1; i <= actualTarget; i++) {
+                            let baseCost = appSpecificData.upgradeCostPerAttribute[attrKey](i);
+                            categoryTotalCost += baseCost;
+                        }
+                    } else {
+                        console.error(`Error: upgradeCostPerAttribute for attribute '${attrKey}' is not a function for BBGM.`);
+                        // If an individual attribute function is missing, mark category as error
+                        categoryTotalCost = NaN; // Indicate error
+                        break;
+                    }
+                }
+            } else {
+                console.warn(`BBGM category '${category.key}' has no defined attributes.`);
+            }
+
+            if (isNaN(categoryTotalCost)) {
+                if (display) display.innerText = "Error";
+                continue;
+            }
         }
 
 
-        if (display) display.innerText = Math.round(cost);
-        totalCost += cost;
+        if (display) display.innerText = Math.round(categoryTotalCost);
+        totalCost += categoryTotalCost;
       }
 
       const summary = elements.upgradeSummary;
@@ -899,17 +1085,28 @@
       const data = {
         app: appId,
         totalPoints: elements.manualTotalPoints?.value || '0',
-        gameResult: elements.gameResult?.value || '',
-        otCount: elements.otCount?.value || '1',
-        opponentType: elements.opponentType?.value || '',
-        teamHistory: elements.teamHistory?.value || '',
         disablePointAdd: elements.disablePointAdd?.checked || false,
         basePointsIncrease: elements.basePointsIncrease?.value || '0',
         stats: {},
-        upgrade: {
-          priceMultiplier: elements.priceMultiplier?.value || '1'
-        }
+        upgrade: {}
       };
+
+      // NBA2K specific data
+      if (appId === 'nba2k') {
+          data.gameResult = elements.gameResult?.value || '';
+          data.otCount = elements.otCount?.value || '1';
+          data.opponentType = elements.opponentType?.value || '';
+          data.teamHistory = elements.teamHistory?.value || '';
+          if (elements.priceMultiplier) {
+              data.upgrade.priceMultiplier = elements.priceMultiplier.value;
+          }
+      }
+      // BBGM specific data
+      else if (appId === 'bbgm') {
+          data.winsCategory = elements.winsCategory?.value || '';
+          data.playoffPerformance = elements.playoffPerformance?.value || '';
+      }
+
 
       const statsForm = elements.statsForm;
       if (statsForm) {
@@ -954,13 +1151,23 @@
           const elements = getAppElements(targetAppId);
 
           if (elements.manualTotalPoints) elements.manualTotalPoints.value = data.totalPoints || 0;
-          if (elements.gameResult) elements.gameResult.value = data.gameResult || '';
-          if (elements.otCount) elements.otCount.value = data.otCount || 1;
-          if (elements.opponentType) elements.opponentType.value = data.opponentType || '';
-          if (elements.teamHistory) elements.teamHistory.value = data.teamHistory || '';
           if (elements.disablePointAdd) elements.disablePointAdd.checked = data.disablePointAdd || false;
           if (elements.basePointsIncrease) elements.basePointsIncrease.value = data.basePointsIncrease || 0;
-          if (elements.priceMultiplier) elements.priceMultiplier.value = data.upgrade.priceMultiplier || '1';
+
+          // NBA2K specific imports
+          if (targetAppId === 'nba2k') {
+              if (elements.gameResult) elements.gameResult.value = data.gameResult || '';
+              if (elements.otCount) elements.otCount.value = data.otCount || 1;
+              if (elements.opponentType) elements.opponentType.value = data.opponentType || '';
+              if (elements.teamHistory) elements.teamHistory.value = data.teamHistory || '';
+              if (elements.priceMultiplier) elements.priceMultiplier.value = data.upgrade.priceMultiplier || '1';
+          }
+          // BBGM specific imports
+          else if (targetAppId === 'bbgm') {
+              if (elements.winsCategory) elements.winsCategory.value = data.winsCategory || '';
+              if (elements.playoffPerformance) elements.playoffPerformance.value = data.playoffPerformance || '';
+          }
+
 
           const statsForm = elements.statsForm;
           if (statsForm) {
@@ -1024,6 +1231,151 @@
         reader.readAsText(file);
     }
 
+    // BBGM Specific: Handles importing player JSON file and converting stats to points
+    async function handleBBGMPlayerFile(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            // Important: Clear the input even if no file was selected, in case of phantom change event
+            event.target.value = ''; // Clear the input to prevent re-triggering on future loads
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async e => {
+            try {
+                const playerData = JSON.parse(e.target.result);
+
+                if (!playerData.players || playerData.players.length === 0 || !playerData.players[0].stats) {
+                    showCustomAlert("Invalid BBGM player file: Missing player stats data.");
+                    return;
+                }
+
+                const playerStats = playerData.players[0].stats;
+                
+                // Group stats by season and calculate combined points
+                const seasonsData = {};
+                playerStats.forEach(statEntry => {
+                    const season = statEntry.season;
+                    if (!seasonsData[season]) {
+                        seasonsData[season] = {
+                            regularSeason: null,
+                            playoffs: null,
+                            combinedPoints: 0
+                        };
+                    }
+                    if (statEntry.playoffs === false) {
+                        seasonsData[season].regularSeason = statEntry;
+                    } else if (statEntry.playoffs === true) {
+                        seasonsData[season].playoffs = statEntry;
+                    }
+                });
+
+                const availableSeasons = Object.keys(seasonsData).sort((a, b) => parseInt(a) - parseInt(b));
+                
+                // Calculate combined points for each season
+                availableSeasons.forEach(season => {
+                    let seasonTotalPoints = 0;
+                    if (seasonsData[season].regularSeason) {
+                        seasonTotalPoints += calculatePointsFromBBGMStats(seasonsData[season].regularSeason);
+                    }
+                    if (seasonsData[season].playoffs) {
+                        seasonTotalPoints += calculatePointsFromBBGMStats(seasonsData[season].playoffs) * PLAYOFF_POINTS_MULTIPLIER;
+                    }
+                    seasonsData[season].combinedPoints = Math.round(seasonTotalPoints); // Round combined points
+                });
+
+                let selectedPoints = null;
+
+                if (availableSeasons.length === 1) {
+                    selectedPoints = seasonsData[availableSeasons[0]].combinedPoints;
+                } else if (availableSeasons.length > 1) {
+                    // Show modal for season selection, passing combined points
+                    selectedPoints = await showSeasonSelectModal(availableSeasons.map(s => ({
+                        season: parseInt(s),
+                        points: seasonsData[s].combinedPoints
+                    })));
+                }
+
+                if (selectedPoints !== null) { // Check for null, as 0 points is valid
+                    const elements = getAppElements('bbgm');
+                    const currentBank = parseInt(elements.manualTotalPoints.value) || 0;
+                    const newBank = currentBank + selectedPoints;
+                    elements.manualTotalPoints.value = newBank;
+                    updatePointsBankDisplay('bbgm');
+                    calculateTotalPoints('bbgm'); // Recalculate game points display
+                    calculateAllUpgrades('bbgm'); // Recalculate upgrades based on new bank
+
+                    showCustomAlert(`Successfully converted stats to ${selectedPoints} points! Total bank: ${newBank}`);
+                    saveCurrentAppData('bbgm');
+                } else {
+                    showCustomAlert("No season selected or valid stats found for conversion.");
+                }
+
+            } catch (err) {
+                showCustomAlert("Error processing BBGM player file: " + err.message);
+                console.error("BBGM Player File Import Error:", err);
+            } finally {
+                // Always clear the file input value after processing, regardless of success or error
+                event.target.value = '';
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // Displays a modal for season selection and returns the selected points
+    function showSeasonSelectModal(seasonsWithPoints) {
+        return new Promise(resolve => {
+            const modal = document.getElementById('seasonSelectModal');
+            const seasonListDiv = document.getElementById('seasonList');
+            seasonListDiv.innerHTML = ''; // Clear previous buttons
+
+            seasonsWithPoints.forEach(seasonData => {
+                const button = document.createElement('button');
+                button.innerText = `Season ${seasonData.season} (Total: ${seasonData.points} points)`;
+                button.onclick = () => {
+                    modal.style.display = 'none';
+                    resolve(seasonData.points);
+                };
+                seasonListDiv.appendChild(button);
+            });
+
+            // Add a cancel button to the modal
+            const cancelButton = document.createElement('button');
+            cancelButton.innerText = 'Cancel';
+            cancelButton.onclick = () => {
+                modal.style.display = 'none';
+                resolve(null); // Resolve with null if cancelled
+            };
+            seasonListDiv.appendChild(cancelButton); // Append to seasonListDiv, not modal directly
+
+            modal.style.display = 'flex'; // Show the modal
+        });
+    }
+
+    // Calculates points from BBGM player stats
+    function calculatePointsFromBBGMStats(stats) {
+        const conversion = appData.bbgm.statConversionPoints;
+        let totalPoints = 0;
+
+        const twoPointersMade = (stats.fg || 0) - (stats.tp || 0);
+
+        totalPoints += (twoPointersMade * conversion.twoPointersMade);
+        totalPoints += (stats.tp || 0) * conversion.threePointersMade;
+        totalPoints += (stats.ft || 0) * conversion.freeThrowsMade;
+
+        totalPoints += (stats.reb || 0) * conversion.reb;
+        totalPoints += (stats.ast || 0) * conversion.ast;
+        totalPoints += (stats.stl || 0) * conversion.stl;
+        totalPoints += (stats.blk || 0) * conversion.blk;
+        totalPoints += (stats.tov || 0) * conversion.tov;
+        totalPoints += (stats.pf || 0) * conversion.pf; // Use 'pf' from JSON
+        totalPoints += (stats.pm || 0) * conversion.pm;
+        totalPoints += (stats.gp || 0) * conversion.gp;
+        totalPoints += (stats.min || 0) * conversion.min;
+
+        return totalPoints; // Do not round here, as playoff multiplier needs to be applied first
+    }
+
 
     // Shows the selected app section and hides others
     function showApp(appId) {
@@ -1033,6 +1385,14 @@
       saveToLocal('activeApp', appId);
 
       loadAppData(appId);
+    }
+
+    // Shows the manual section
+    function showManual() {
+      document.getElementById('mainMenu')?.classList.remove('active');
+      document.querySelectorAll('.app-section').forEach(el => el.classList.remove('active'));
+      document.getElementById('manualApp')?.classList.add('active');
+      // No need to save activeApp for manual, as it's a temporary view
     }
 
     // Returns to the main menu
@@ -1068,16 +1428,28 @@
       const elements = getAppElements(appId);
       const data = {
         totalPoints: elements.manualTotalPoints?.value || '0',
-        gameResult: elements.gameResult?.value || '',
-        otCount: elements.otCount?.value || '1',
-        opponentType: elements.opponentType?.value || '',
-        teamHistory: elements.teamHistory?.value || '',
         disablePointAdd: elements.disablePointAdd?.checked || false,
         basePointsIncrease: elements.basePointsIncrease?.value || '0',
-        priceMultiplier: elements.priceMultiplier?.value || '1',
         stats: {},
         upgrade: {}
       };
+
+      // NBA2K specific data
+      if (appId === 'nba2k') {
+          data.gameResult = elements.gameResult?.value || '';
+          data.otCount = elements.otCount?.value || '1';
+          data.opponentType = elements.opponentType?.value || '';
+          data.teamHistory = elements.teamHistory?.value || '';
+          if (elements.priceMultiplier) {
+              data.upgrade.priceMultiplier = elements.priceMultiplier.value;
+          }
+      }
+      // BBGM specific data
+      else if (appId === 'bbgm') {
+          data.winsCategory = elements.winsCategory?.value || '';
+          data.playoffPerformance = elements.playoffPerformance?.value || '';
+      }
+
 
       const statsForm = elements.statsForm;
       if (statsForm) {
@@ -1108,13 +1480,22 @@
 
       // Apply loaded data or defaults
       if (elements.manualTotalPoints) elements.manualTotalPoints.value = data?.totalPoints || 1000;
-      if (elements.gameResult) elements.gameResult.value = data?.gameResult || '';
-      if (elements.otCount) elements.otCount.value = data?.otCount || 1;
-      if (elements.opponentType) elements.opponentType.value = data?.opponentType || '';
-      if (elements.teamHistory) elements.teamHistory.value = data?.teamHistory || '';
       if (elements.disablePointAdd) elements.disablePointAdd.checked = data?.disablePointAdd || false;
       if (elements.basePointsIncrease) elements.basePointsIncrease.value = data?.basePointsIncrease || 0;
-      if (elements.priceMultiplier) elements.priceMultiplier.value = data?.priceMultiplier || '1';
+
+      // NBA2K specific loads
+      if (appId === 'nba2k') {
+          if (elements.gameResult) elements.gameResult.value = data?.gameResult || '';
+          if (elements.otCount) elements.otCount.value = data?.otCount || 1;
+          if (elements.opponentType) elements.opponentType.value = data?.opponentType || '';
+          if (elements.teamHistory) elements.teamHistory.value = data?.teamHistory || '';
+          if (elements.priceMultiplier) elements.priceMultiplier.value = data?.upgrade?.priceMultiplier || '1';
+      }
+      // BBGM specific loads
+      else if (appId === 'bbgm') {
+          if (elements.winsCategory) elements.winsCategory.value = data?.winsCategory || '';
+          if (elements.playoffPerformance) elements.playoffPerformance.value = data?.playoffPerformance || '';
+      }
 
 
       // Populate stats form
@@ -1156,8 +1537,14 @@
 
     // Initial load on page load
     window.onload = function() {
+      const showTutorialSetting = loadFromLocal('showTutorialOnStartup');
       const activeApp = loadFromLocal('activeApp');
-      if (activeApp) {
+
+      // If tutorial is set to show on startup, display it and then turn off the setting
+      if (showTutorialSetting === true) {
+        showManual();
+        saveToLocal('showTutorialOnStartup', false); // Turn off for next time
+      } else if (activeApp) {
         showApp(activeApp);
       } else {
         document.getElementById('mainMenu')?.classList.add('active');
@@ -1171,6 +1558,13 @@
       // Attach event listeners for both apps
       attachEventListeners('nba2k');
       attachEventListeners('bbgm');
+
+      // Initialize the state of the tutorial checkbox
+      const showTutorialCheckbox = document.getElementById('showTutorialOnStartup');
+      if (showTutorialCheckbox) {
+          showTutorialCheckbox.checked = (loadFromLocal('showTutorialOnStartup') === true);
+      }
+
 
       // Generate background particles
       for (let i = 0; i < 100; i++) {
