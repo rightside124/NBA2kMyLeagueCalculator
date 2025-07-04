@@ -2,8 +2,151 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NBA 2K23 MyCareer Calculator</title>
+  <title>MyCareer Tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --text: #e2e8f0;
+      --accent: #38bdf8;
+      --section: #1e293b;
+      --highlight: #fbbf24;
+    }
+    body.light-mode {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --accent: #0ea5e9;
+      --section: #e2e8f0;
+      --highlight: #ca8a04;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    h1 {
+      color: var(--accent);
+    }
+    .menu, .app-section {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .app-section.active {
+      display: block;
+      max-height: 100vh;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      scrollbar-color: var(--accent) var(--section);
+      scrollbar-width: thin;
+    }
+    .app-section.active::-webkit-scrollbar {
+      width: 10px;
+    }
+    .app-section.active::-webkit-scrollbar-track {
+      background: var(--section);
+    }
+    .app-section.active::-webkit-scrollbar-thumb {
+      background-color: var(--accent);
+      border-radius: 5px;
+      border: 2px solid var(--section);
+    }
+    .app-container {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    button {
+      background: var(--accent);
+      color: black;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .file-label {
+      display: inline-block;
+      background: var(--highlight);
+      color: black;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .file-label:hover {
+      background: gold;
+    }
+    #fileInput {
+      display: none;
+    }
+    #space-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      background: radial-gradient(circle at center, #1e293b, #0f172a);
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: moveParticles linear infinite;
+    }
+    @keyframes moveParticles {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      h1 {
+        font-size: 1.5rem;
+        text-align: center;
+      }
+      .app-container {
+        padding: 10px;
+      }
+      button, .file-label {
+        width: 100%;
+        font-size: 1rem;
+        margin: 5px 0;
+      }
+      pre {
+        font-size: 0.8rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    }
+  </style>
+</head>
+<body onload="loadFromLocal()">
+  <div id="space-bg"></div>
+
+  <div class="menu active" id="mainMenu">
+    <h1>🏀 MyCareer Simulators</h1>
+    <label for="fileInput" class="file-label">📂 Import JSON</label>
+    <input type="file" id="fileInput" accept=".json" onchange="handleFile(event)" />
+    <button onclick="showApp('nba2k')">NBA 2K23 MyCareer Tool</button>
+    <button onclick="showApp('bbgm')">BBGM MyCareer Upgrade Simulator</button>
+  </div>
+
+  <div class="app-section" id="nba2kApp">
+    <div class="app-container">
+      <button onclick="backToMenu()">⬅ Back to Menu</button>
   <style>
     :root {
       --bg: #0f172a;
@@ -114,7 +257,6 @@
   </div>
 
   <div class="container">
-    <!-- Points Bank Panel -->
     <div class="panel">
       <h2>Points Bank</h2>
       <label>Total Points Bank:
@@ -123,7 +265,6 @@
       <div class="result">Total Points Bank: <span id="pointsBankDisplay">1000</span></div>
     </div>
 
-    <!-- Bonus Multipliers Panel -->
     <div class="panel">
       <h2>Bonus Multipliers</h2>
       <label>Game Result:
@@ -168,7 +309,6 @@
       <label><input type="checkbox" id="disablePointAdd"> Don't add to total bank</label>
     </div>
 
-    <!-- Game Stats Panel -->
     <div class="panel">
       <h2>Game Stats</h2>
       <form id="statsForm" onsubmit="event.preventDefault(); calculateTotalPoints();">
@@ -183,12 +323,13 @@
         <label>Turnovers (gtov): <input type="number" name="gtov" value="0"></label>
         <label>Fouls (gfls): <input type="number" name="gfls" value="0"></label>
         <label>+/- Score (gpm): <input type="number" name="gpm" value="0"></label>
+        <label>Minutes (gm): <input type="number" name="gm" value="0"></label>
+        <label>Base Points Increase: <input type="number" id="basePointsIncrease" value="0"></label>
         <button type="submit">Calculate Points Earned</button>
       </form>
       <div class="result">Points Earned: <span id="pointsEarned">0</span></div>
     </div>
 
-    <!-- Upgrade Panel -->
     <div class="panel">
       <h2>Attribute Upgrade Cost</h2>
 
@@ -223,13 +364,20 @@
       <button onclick="calculateAllUpgrades()">Calculate All Upgrade Costs</button>
       <div class="result" id="upgradeSummary"></div>
       <button onclick="confirmUpgrade()">Confirm Upgrade</button>
+      <label>Price Multiplier:
+        <select id="priceMultiplier">
+          <option value="1">Not Valuable (1×)</option>
+          <option value="2">Valuable (2×)</option>
+          <option value="3">Very Valuable (3×)</option>
+        </select>
+      </label>
     </div>
   </div>
 
   <script>
     const pointValues = {
       gpts: 2, greb: 5, gast: 5, gstl: 10, gblk: 10,
-      g2pt: 2, g3pt: 3, gfts: 1, gtov: -2, gfls: -1, gpm: 5
+      g2pt: 2, g3pt: 3, gfts: 1, gtov: -2, gfls: -1, gpm: 5, gm: 1
     };
 
     const upgradeCostPerPoint = {
@@ -239,7 +387,6 @@
       athleticism: r => (r < 60 ? 30 : r <= 79 ? 65 : r <= 89 ? 105 : r <= 94 ? 155 : 100)
     };
 
-    // -- Toggle helpers
     function toggleDarkMode() {
       document.body.classList.toggle('light-mode');
     }
@@ -254,13 +401,15 @@
       info.style.display = info.style.display === "none" ? "block" : "none";
     }
 
-    // -- Calculation logic for total points earned
     function calculateTotalPoints() {
       const form = document.forms['statsForm'];
       let earned = 0;
       for (let key in pointValues) {
         earned += (parseInt(form[key].value) || 0) * pointValues[key];
       }
+
+      const baseIncrease = parseInt(document.getElementById("basePointsIncrease").value) || 0;
+      earned += baseIncrease;
 
       const result = document.getElementById("gameResult").value;
       const opp = parseFloat(document.getElementById("opponentType").value);
@@ -283,19 +432,19 @@
       document.getElementById('pointsEarned').innerText = total;
     }
 
-    // -- Calculation logic for upgrades
     function calculateAllUpgrades() {
       const categories = [
-        { key: 'offense', use: document.getElementById("useOffense").checked },
-        { key: 'defense', use: document.getElementById("useDefense").checked },
-        { key: 'athletic', use: document.getElementById("useAthletic").checked },
-        { key: 'mental', use: document.getElementById("useMental").checked }
+        { key: 'offense', use: document.getElementById("useOffense").checked, base: 1.25 },
+        { key: 'defense', use: document.getElementById("useDefense").checked, base: 1.5 },
+        { key: 'athletic', use: document.getElementById("useAthletic").checked, base: 2.5 },
+        { key: 'mental', use: document.getElementById("useMental").checked, base: 2.0 }
       ];
 
       let totalCost = 0;
       const bank = parseInt(document.getElementById('manualTotalPoints').value);
+      const priceMultiplier = parseFloat(document.getElementById('priceMultiplier').value);
 
-      for (let { key, use } of categories) {
+      for (let { key, use, base } of categories) {
         const current = parseInt(document.getElementById(`${key}Current`).value);
         const target = parseInt(document.getElementById(`${key}Target`).value);
         const display = document.getElementById(`${key}Cost`);
@@ -312,20 +461,21 @@
 
         let cost = 0;
         for (let i = current + 1; i <= target; i++) {
-          cost += upgradeCostPerPoint[key === 'athletic' ? 'athleticism' : key](i);
+          let baseCost = upgradeCostPerPoint[key === 'athletic' ? 'athleticism' : key](i);
+          cost += baseCost * base * priceMultiplier;
         }
 
-        display.innerText = cost;
+        display.innerText = Math.round(cost);
         totalCost += cost;
       }
 
       const summary = document.getElementById("upgradeSummary");
       summary.innerHTML = `
-        Total Upgrade Cost: ${totalCost}<br>
+        Total Upgrade Cost: ${Math.round(totalCost)}<br>
         Points Before Upgrade: ${bank}<br>
-        Points After Upgrade: ${bank - totalCost}
+        Points After Upgrade: ${bank - Math.round(totalCost)}
       `;
-      summary.dataset.totalCost = totalCost;
+      summary.dataset.totalCost = Math.round(totalCost);
     }
 
     function confirmUpgrade() {
@@ -343,7 +493,6 @@
       alert("Upgrade applied!");
     }
 
-    // -- Data export / import
     function exportData() {
       const data = {
         totalPoints: document.getElementById('manualTotalPoints').value,
@@ -387,26 +536,508 @@
         try {
           const data = JSON.parse(e.target.result);
           document.getElementById('manualTotalPoints').value = data.totalPoints || 0;
-          document.getElementById('pointsBankDisplay').innerText = document.getElementById('manualTotalPoints').value;
-
-          document.forms['statsForm'];
-          for (let key in data.stats) {
-            const el = document.forms['statsForm'][key];
-            if (el) el.value = data.stats[key];
+          for (let [key, value] of Object.entries(data.stats || {})) {
+            if (document.forms['statsForm'][key]) {
+              document.forms['statsForm'][key].value = value;
+            }
           }
-
-          // restore upgrade panel values
-          const cats = ['offense','defense','athletic','mental'];
-          for (let key of cats) {
-            document.getElementById(`${key}Current`).value = data.upgrade[key].current;
-            document.getElementById(`${key}Target`).value = data.upgrade[key].target;
-            document.getElementById(`use${key.charAt(0).toUpperCase()+key.slice(1)}`).checked = data.upgrade[key].use;
+          for (let [key, values] of Object.entries(data.upgrade || {})) {
+            document.getElementById(`${key}Current`).value = values.current;
+            document.getElementById(`${key}Target`).value = values.target;
+            document.getElementById(`use${key.charAt(0).toUpperCase() + key.slice(1)}`).checked = values.use;
           }
-        } catch {
-          alert("Invalid JSON file.");
+          calculateTotalPoints();
+          calculateAllUpgrades();
+        } catch (err) {
+          alert("Invalid file format");
         }
       };
       reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
+
+    </div>
+  </div>
+
+  <div class="app-section" id="bbgmApp">
+    <div class="app-container">
+      <button onclick="backToMenu()">⬅ Back to Menu</button>
+<style>
+    :root {
+      --bg: #0f172a;
+      --text: #e2e8f0;
+      --accent: #38bdf8;
+      --section: #1e293b;
+      --highlight: #fbbf24;
+    }
+    body.light-mode {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --accent: #0ea5e9;
+      --section: #e2e8f0;
+      --highlight: #ca8a04;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+    h1, h2, h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .panel {
+      flex: 1 1 300px;
+      background: var(--section);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      min-width: 300px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, button {
+      padding: 8px;
+      margin-top: 5px;
+      width: 100%;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      background: var(--accent);
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 15px;
+      width: auto;
+    }
+    .result {
+      font-weight: bold;
+      font-size: 18px;
+      color: var(--highlight);
+      margin-top: 10px;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .top-bar button {
+      margin-left: 10px;
+    }
+    .file-input {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .top-bar > div {
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h1>BasketballGM MyCareer Tool</h1>
+    <div>
+      <button onclick="exportData()">💾 Export JSON</button>
+      <label>
+        <input type="file" class="file-input" id="importFile" accept=".json" onchange="importData(event)">
+        <button onclick="document.getElementById('importFile').click()">📂 Import JSON</button>
+      </label>
+      <button onclick="toggleDarkMode()">🌓 Toggle Dark Mode</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="panel">
+      <h2>Points Bank</h2>
+      <label>Total Points Bank:
+        <input type="number" id="manualTotalPoints" value="1000">
+      </label>
+      <div class="result">Total Points Bank: <span id="pointsBankDisplay">0</span></div>
+    </div>
+
+    <div class="panel">
+      <h2>Bonus Multipliers</h2>
+      <label>Game Result:
+        <select id="gameResult" onchange="toggleOTBox()">
+          <option value="win">Win</option>
+          <option value="otwin">OT Win</option>
+          <option value="lose">Lose</option>
+          <option value="otlose">OT Lose</option>
+        </select>
+      </label>
+      <div id="otCountBox" style="display:none;">
+        <label>Overtime Count (1–6):
+          <input type="number" id="otCount" min="1" max="6" value="1">
+        </label>
+      </div>
+      <label>Opponent Type:
+        <select id="opponentType">
+          <option value="1">Easy Opponent</option>
+          <option value="1.25">Normal Opponent</option>
+          <option value="1.5">Hard Opponent</option>
+          <option value="1.75">1st in Conference</option>
+          <option value="2">1st/2nd in League</option>
+          <option value="3">All-Star Game</option>
+        </select>
+      </label>
+      <label>Team Last Season:
+        <select id="teamHistory">
+          <option value="1">Did Not Make Playoffs</option>
+          <option value="1.25">1st Round</option>
+          <option value="1.5">2nd Round</option>
+          <option value="1.75">Semifinalist</option>
+          <option value="1.9">Finalist</option>
+          <option value="2">Defending Champions</option>
+        </select>
+      </label>
+      <button onclick="toggleMultiplierInfo()">ℹ️ Explanation</button>
+      <div id="multiplierInfo" style="display:none; margin-top:10px;">
+        <p><strong>Game Result:</strong> Win ×1.5, OT Win adds +0.1 per OT (max 6), OT Lose ×1.25</p>
+        <p><strong>Opponent:</strong> Easy×1, Normal×1.25, Hard×1.5, 1st in Conf×1.75, Top‑2×2, All‑Star×3</p>
+        <p><strong>Team History:</strong> No Playoffs×1, 1stRn×1.25, 2ndRn×1.5, Semis×1.75, Finals×1.9, Champs×2</p>
+      </div>
+      <label><input type="checkbox" id="disablePointAdd"> Don't add to total bank</label>
+    </div>
+
+    <div class="panel">
+      <h2>Game Stats</h2>
+      <form id="statsForm" onsubmit="event.preventDefault(); calculateTotalPoints();">
+        <label>Points (gpts): <input type="number" name="gpts" value="0"></label>
+        <label>Rebounds (greb): <input type="number" name="greb" value="0"></label>
+        <label>Assists (gast): <input type="number" name="gast" value="0"></label>
+        <label>Steals (gstl): <input type="number" name="gstl" value="0"></label>
+        <label>Blocks (gblk): <input type="number" name="gblk" value="0"></label>
+        <label>2PT Made (g2pt): <input type="number" name="g2pt" value="0"></label>
+        <label>3PT Made (g3pt): <input type="number" name="g3pt" value="0"></label>
+        <label>Free Throws (gfts): <input type="number" name="gfts" value="0"></label>
+        <label>Turnovers (gtov): <input type="number" name="gtov" value="0"></label>
+        <label>Fouls (gfls): <input type="number" name="gfls" value="0"></label>
+        <label>+/- Score (gpm): <input type="number" name="gpm" value="0"></label>
+        <label>Minutes (gm): <input type="number" name="gm" value="0"></label>
+        <label>Base Points Increase: <input type="number" id="basePointsIncrease" value="0"></label>
+        <button type="submit">Calculate Points Earned</button>
+      </form>
+      <div class="result">Points Earned: <span id="pointsEarned">0</span></div>
+    </div>
+
+    <div class="panel">
+      <h2>Attribute Upgrade Cost</h2>
+
+      <div>
+        <h3><input type="checkbox" id="useOffense" checked> Offense</h3>
+        <label>Current Rating: <input type="number" id="offenseCurrent" value="60"></label>
+        <label>Target Rating: <input type="number" id="offenseTarget" value="70"></label>
+        <div class="result">Cost: <span id="offenseCost">0</span></div>
+      </div>
+
+      <div>
+        <h3><input type="checkbox" id="useAthletic" checked> Athleticism</h3>
+        <label>Current Rating: <input type="number" id="athleticCurrent" value="60"></label>
+        <label>Target Rating: <input type="number" id="athleticTarget" value="70"></label>
+        <div class="result">Cost: <span id="athleticCost">0</span></div>
+      </div>
+
+      <div>
+        <h3><input type="checkbox" id="useSkill" checked> Skill</h3>
+        <label>Current Rating: <input type="number" id="skillCurrent" value="60"></label>
+        <label>Target Rating: <input type="number" id="skillTarget" value="70"></label>
+        <div class="result">Cost: <span id="skillCost">0</span></div>
+      </div>
+
+      <button onclick="calculateAllUpgrades()">Calculate All Upgrade Costs</button>
+      <div class="result" id="upgradeSummary"></div>
+      <button onclick="confirmUpgrade()">Confirm Upgrade</button>
+      <label>Price Multiplier:
+        <select id="priceMultiplier">
+          <option value="1">Not Valuable (1×)</option>
+          <option value="2">Valuable (2×)</option>
+          <option value="3">Very Valuable (3×)</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <script>
+    const pointValues = {
+      gpts: 2, greb: 5, gast: 5, gstl: 10, gblk: 10,
+      g2pt: 2, g3pt: 3, gfts: 1, gtov: -2, gfls: -1, gpm: 5, gm: 1
+    };
+
+    const upgradeCostPerPoint = {
+      offense: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
+      skill: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
+      athleticism: r => (r < 60 ? 64 : r <= 118 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274)
+    };
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('light-mode');
+    }
+
+    function toggleOTBox() {
+      document.getElementById("otCountBox").style.display =
+        document.getElementById("gameResult").value === "otwin" ? "block" : "none";
+    }
+
+    function toggleMultiplierInfo() {
+      const info = document.getElementById("multiplierInfo");
+      info.style.display = info.style.display === "none" ? "block" : "none";
+    }
+
+    function calculateTotalPoints() {
+      const form = document.forms['statsForm'];
+      let earned = 0;
+      for (let key in pointValues) {
+        earned += (parseInt(form[key].value) || 0) * pointValues[key];
+      }
+
+      const baseIncrease = parseInt(document.getElementById("basePointsIncrease").value) || 0;
+      earned += baseIncrease;
+
+      const result = document.getElementById("gameResult").value;
+      const opp = parseFloat(document.getElementById("opponentType").value);
+      const team = parseFloat(document.getElementById("teamHistory").value);
+      const disable = document.getElementById("disablePointAdd").checked;
+
+      let multiplier = 1;
+      if (result === "win") multiplier = 1.5;
+      else if (result === "otwin") {
+        const ot = Math.min(6, parseInt(document.getElementById("otCount").value) || 1);
+        multiplier = 1.5 + (0.1 * ot);
+      } else if (result === "otlose") multiplier = 1.25;
+
+      const total = Math.round(earned * multiplier * opp * team);
+      const bank = document.getElementById('manualTotalPoints');
+      const newTotal = disable ? parseInt(bank.value) : parseInt(bank.value) + total;
+
+      if (!disable) bank.value = newTotal;
+      document.getElementById('pointsBankDisplay').innerText = newTotal;
+      document.getElementById('pointsEarned').innerText = total;
+    }
+
+    function calculateAllUpgrades() {
+      const categories = [
+        { key: 'offense', use: document.getElementById("useOffense").checked, base: 1.25 },
+        { key: 'athletic', use: document.getElementById("useAthletic").checked, base: 2.5 },
+        { key: 'skill', use: document.getElementById("useSkill").checked, base: 3.0 }
+      ];
+
+      let totalCost = 0;
+      const bank = parseInt(document.getElementById('manualTotalPoints').value);
+      const priceMultiplier = parseFloat(document.getElementById('priceMultiplier').value);
+
+      for (let { key, use, base } of categories) {
+        const current = parseInt(document.getElementById(`${key}Current`).value);
+        const target = parseInt(document.getElementById(`${key}Target`).value);
+        const display = document.getElementById(`${key}Cost`);
+
+        if (!use) {
+          display.innerText = "Ignored";
+          continue;
+        }
+
+        if (isNaN(current) || isNaN(target) || current >= target) {
+          display.innerText = "Invalid";
+          continue;
+        }
+
+        let cost = 0;
+        for (let i = current + 1; i <= target; i++) {
+          let baseCost = upgradeCostPerPoint[key](i);
+          cost += baseCost * base * priceMultiplier;
+        }
+
+        display.innerText = Math.round(cost);
+        totalCost += cost;
+      }
+
+      const summary = document.getElementById("upgradeSummary");
+      summary.innerHTML = `
+        Total Upgrade Cost: ${Math.round(totalCost)}<br>
+        Points Before Upgrade: ${bank}<br>
+        Points After Upgrade: ${bank - Math.round(totalCost)}
+      `;
+      summary.dataset.totalCost = Math.round(totalCost);
+    }
+
+    function confirmUpgrade() {
+      const cost = parseInt(document.getElementById("upgradeSummary").dataset.totalCost || "0");
+      const bankInput = document.getElementById('manualTotalPoints');
+      const currentPoints = parseInt(bankInput.value);
+
+      if (cost > currentPoints) {
+        alert("Not enough points for upgrade!");
+        return;
+      }
+    }
+
+    function exportData() {
+      const data = {
+        totalPoints: document.getElementById('manualTotalPoints').value,
+        stats: Object.fromEntries(new FormData(document.forms['statsForm'])),
+        upgrade: {
+          offense: {
+            current: document.getElementById('offenseCurrent').value,
+            target: document.getElementById('offenseTarget').value,
+            use: document.getElementById('useOffense').checked
+          },
+          athletic: {
+            current: document.getElementById('athleticCurrent').value,
+            target: document.getElementById('athleticTarget').value,
+            use: document.getElementById('useAthletic').checked
+          },
+           skill: {
+            current: document.getElementById('skillCurrent').value,
+            target: document.getElementById('skillTarget').value,
+            use: document.getElementById('useSkill').checked
+          }
+        }
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "nba2k23_stats.json";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          document.getElementById('manualTotalPoints').value = data.totalPoints || 0;
+          for (let [key, value] of Object.entries(data.stats || {})) {
+            if (document.forms['statsForm'][key]) {
+              document.forms['statsForm'][key].value = value;
+            }
+          }
+          for (let [key, values] of Object.entries(data.upgrade || {})) {
+            document.getElementById(`${key}Current`).value = values.current;
+            document.getElementById(`${key}Target`).value = values.target;
+            document.getElementById(`use${key.charAt(0).toUpperCase() + key.slice(1)}`).checked = values.use;
+          }
+          calculateTotalPoints();
+          calculateAllUpgrades();
+        } catch (err) {
+          alert("Invalid file format");
+        }
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+    </div>
+  </div>
+
+  <script>
+    function showApp(app) {
+      document.getElementById('mainMenu').classList.remove('active');
+      document.getElementById(app + 'App').classList.add('active');
+      saveToLocal('app', app);
+    }
+
+    function backToMenu() {
+      document.querySelectorAll('.app-section').forEach(el => el.classList.remove('active'));
+      document.getElementById('mainMenu').classList.add('active');
+    }
+
+    function saveToLocal(key, value) {
+      localStorage.setItem('mycareer_' + key, JSON.stringify(value));
+    }
+
+    function loadFromLocal() {
+      const app = JSON.parse(localStorage.getItem('mycareer_app'));
+      const data = JSON.parse(localStorage.getItem('mycareer_data_' + app));
+      if (app && data) {
+        showApp(app);
+        if (app === 'nba2k') loadNBA2K(data);
+        if (app === 'bbgm') loadBBGM(data);
+      }
+    }
+
+    function handleFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data && data.app) {
+            saveToLocal('app', data.app);
+            saveToLocal('data_' + data.app, data);
+            showApp(data.app);
+            if (data.app === 'nba2k') loadNBA2K(data);
+            if (data.app === 'bbgm') loadBBGM(data);
+          } else {
+            alert("Invalid file: no 'app' key found");
+          }
+        } catch (e) {
+          alert("Failed to load file");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function exportAppData(app, data) {
+      data.app = app;
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = app + "_save.json";
+      a.click();
+    }
+
+    function loadNBA2K(data) {
+      document.getElementById('nba2kApp').querySelector('.app-container').innerHTML = `
+        <button onclick="backToMenu()">⬅ Back to Menu</button>
+        <h2>NBA 2K23 MyCareer Tool Loaded</h2>
+        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }
+
+    function loadBBGM(data) {
+      document.getElementById('bbgmApp').querySelector('.app-container').innerHTML = `
+        <button onclick="backToMenu()">⬅ Back to Menu</button>
+        <h2>BBGM MyCareer Upgrade Simulator Loaded</h2>
+        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }
+
+    // Background particle generation
+    for (let i = 0; i < 100; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.top = Math.random() * -100 + 'vh';
+      p.style.animationDuration = (5 + Math.random() * 10) + 's';
+      document.getElementById('space-bg').appendChild(p);
     }
   </script>
 </body>
