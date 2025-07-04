@@ -261,7 +261,7 @@
   <div class="menu active" id="mainMenu">
     <h1>🏀 MyCareer Simulators</h1>
     <label for="fileInput" class="file-label">📂 Import JSON</label>
-    <input type="file" id="fileInput" accept=".json" onchange="handleFile(event)" />
+    <input type="file" id="fileInput" accept=".json" />
     <button onclick="showApp('nba2k')">NBA 2K23 MyCareer Tool</button>
     <button onclick="showApp('bbgm')">BBGM MyCareer Upgrade Simulator</button>
     <button onclick="redirectToBBGM()"><i class="fas fa-chart-line"></i> Open BBGM</button>
@@ -278,7 +278,7 @@
       <div>
         <button onclick="exportData('nba2k')">💾 Export JSON</button>
         <label>
-          <input type="file" class="file-input" id="nba2k_importFile" accept=".json" onchange="importData(event, 'nba2k')">
+          <input type="file" class="file-input" id="nba2k_importFile" accept=".json">
           <button onclick="document.getElementById('nba2k_importFile').click()">📂 Import JSON</button>
         </label>
         <button onclick="backToMenu()">⬅ Back to Menu</button>
@@ -288,15 +288,15 @@
       <div class="panel">
         <h2>Points Bank</h2>
         <label>Total Points Bank:
-          <input type="number" id="nba2k_manualTotalPoints" value="1000" onchange="updatePointsBankDisplay('nba2k')">
-        </label>
+          <input type="number" id="nba2k_manualTotalPoints" value="1000"></label>
         <div class="result">Total Points Bank: <span id="nba2k_pointsBankDisplay">1000</span></div>
       </div>
 
       <div class="panel">
         <h2>Bonus Multipliers</h2>
         <label>Game Result:
-          <select id="nba2k_gameResult" onchange="toggleOTBox('nba2k')">
+          <select id="nba2k_gameResult">
+            <option value="">- Select Here -</option>
             <option value="win">Win</option>
             <option value="otwin">OT Win</option>
             <option value="lose">Lose</option>
@@ -305,11 +305,11 @@
         </label>
         <div id="nba2k_otCountBox" style="display:none;">
           <label>Overtime Count (1–6):
-            <input type="number" id="nba2k_otCount" min="1" max="6" value="1">
-          </label>
+            <input type="number" id="nba2k_otCount" min="1" max="6" value="1"></label>
         </div>
         <label>Opponent Type:
           <select id="nba2k_opponentType">
+            <option value="">- Select Here -</option>
             <option value="1">Easy Opponent</option>
             <option value="1.25">Normal Opponent</option>
             <option value="1.5">Hard Opponent</option>
@@ -320,6 +320,7 @@
         </label>
         <label>Team Last Season:
           <select id="nba2k_teamHistory">
+            <option value="">- Select Here -</option>
             <option value="1">Did Not Make Playoffs</option>
             <option value="1.25">1st Round</option>
             <option value="1.5">2nd Round</option>
@@ -363,52 +364,52 @@
         <div>
           <h3>
             <label class="checkbox-container">
-              <input type="checkbox" id="nba2k_useOffense" checked onchange="calculateAllUpgrades('nba2k')">
+              <input type="checkbox" id="nba2k_useOffense" checked>
               <span class="checkmark"></span>
               Offense
             </label>
           </h3>
-          <label>Current Rating: <input type="number" id="nba2k_offenseCurrent" value="60" onchange="calculateAllUpgrades('nba2k')"></label>
-          <label>Target Rating: <input type="number" id="nba2k_offenseTarget" value="70" onchange="calculateAllUpgrades('nba2k')"></label>
+          <label>Current Rating: <input type="number" id="nba2k_offenseCurrent" value="60"></label>
+          <label>Target Rating: <input type="number" id="nba2k_offenseTarget" value="70"></label>
           <div class="result">Cost: <span id="nba2k_offenseCost">0</span></div>
         </div>
 
         <div>
           <h3>
             <label class="checkbox-container">
-              <input type="checkbox" id="nba2k_useDefense" checked onchange="calculateAllUpgrades('nba2k')">
+              <input type="checkbox" id="nba2k_useDefense" checked>
               <span class="checkmark"></span>
               Defense
             </label>
           </h3>
-          <label>Current Rating: <input type="number" id="nba2k_defenseCurrent" value="60" onchange="calculateAllUpgrades('nba2k')"></label>
-          <label>Target Rating: <input type="number" id="nba2k_defenseTarget" value="70" onchange="calculateAllUpgrades('nba2k')"></label>
+          <label>Current Rating: <input type="number" id="nba2k_defenseCurrent" value="60"></label>
+          <label>Target Rating: <input type="number" id="nba2k_defenseTarget" value="70"></label>
           <div class="result">Cost: <span id="nba2k_defenseCost">0</span></div>
         </div>
 
         <div>
           <h3>
             <label class="checkbox-container">
-              <input type="checkbox" id="nba2k_useAthletic" checked onchange="calculateAllUpgrades('nba2k')">
+              <input type="checkbox" id="nba2k_useAthletic" checked>
               <span class="checkmark"></span>
               Athleticism
             </label>
           </h3>
-          <label>Current Rating: <input type="number" id="nba2k_athleticCurrent" value="60" onchange="calculateAllUpgrades('nba2k')"></label>
-          <label>Target Rating: <input type="number" id="nba2k_athleticTarget" value="70" onchange="calculateAllUpgrades('nba2k')"></label>
+          <label>Current Rating: <input type="number" id="nba2k_athleticCurrent" value="60"></label>
+          <label>Target Rating: <input type="number" id="nba2k_athleticTarget" value="70"></label>
           <div class="result">Cost: <span id="nba2k_athleticCost">0</span></div>
         </div>
 
         <div>
           <h3>
             <label class="checkbox-container">
-              <input type="checkbox" id="nba2k_useMental" checked onchange="calculateAllUpgrades('nba2k')">
+              <input type="checkbox" id="nba2k_useMental" checked>
               <span class="checkmark"></span>
               Mental
             </label>
           </h3>
-          <label>Current Rating: <input type="number" id="nba2k_mentalCurrent" value="60" onchange="calculateAllUpgrades('nba2k')"></label>
-          <label>Target Rating: <input type="number" id="nba2k_mentalTarget" value="70" onchange="calculateAllUpgrades('nba2k')"></label>
+          <label>Current Rating: <input type="number" id="nba2k_mentalCurrent" value="60"></label>
+          <label>Target Rating: <input type="number" id="nba2k_mentalTarget" value="70"></label>
           <div class="result">Cost: <span id="nba2k_mentalCost">0</span></div>
         </div>
 
@@ -416,7 +417,7 @@
         <div class="result" id="nba2k_upgradeSummary"></div>
         <button onclick="confirmUpgrade('nba2k')">Confirm Upgrade</button>
         <label>Price Multiplier:
-          <select id="nba2k_priceMultiplier" onchange="calculateAllUpgrades('nba2k')">
+          <select id="nba2k_priceMultiplier">
             <option value="1">Not Valuable (1×)</option>
             <option value="2">Valuable (2×)</option>
             <option value="3">Very Valuable (3×)</option>
@@ -433,7 +434,7 @@
       <div>
         <button onclick="exportData('bbgm')">💾 Export JSON</button>
         <label>
-          <input type="file" class="file-input" id="bbgm_importFile" accept=".json" onchange="importData(event, 'bbgm')">
+          <input type="file" class="file-input" id="bbgm_importFile" accept=".json">
           <button onclick="document.getElementById('bbgm_importFile').click()">📂 Import JSON</button>
         </label>
         <button onclick="backToMenu()">⬅ Back to Menu</button>
@@ -443,15 +444,15 @@
       <div class="panel">
         <h2>Points Bank</h2>
         <label>Total Points Bank:
-          <input type="number" id="bbgm_manualTotalPoints" value="1000" onchange="updatePointsBankDisplay('bbgm')">
-        </label>
+          <input type="number" id="bbgm_manualTotalPoints" value="1000"></label>
         <div class="result">Total Points Bank: <span id="bbgm_pointsBankDisplay">1000</span></div>
       </div>
 
       <div class="panel">
         <h2>Bonus Multipliers</h2>
         <label>Game Result:
-          <select id="bbgm_gameResult" onchange="toggleOTBox('bbgm')">
+          <select id="bbgm_gameResult">
+            <option value="">- Select Here -</option>
             <option value="win">Win</option>
             <option value="otwin">OT Win</option>
             <option value="lose">Lose</option>
@@ -460,11 +461,11 @@
         </label>
         <div id="bbgm_otCountBox" style="display:none;">
           <label>Overtime Count (1–6):
-            <input type="number" id="bbgm_otCount" min="1" max="6" value="1">
-          </label>
+            <input type="number" id="bbgm_otCount" min="1" max="6" value="1"></label>
         </div>
         <label>Opponent Type:
           <select id="bbgm_opponentType">
+            <option value="">- Select Here -</option>
             <option value="1">Easy Opponent</option>
             <option value="1.25">Normal Opponent</option>
             <option value="1.5">Hard Opponent</option>
@@ -475,6 +476,7 @@
         </label>
         <label>Team Last Season:
           <select id="bbgm_teamHistory">
+            <option value="">- Select Here -</option>
             <option value="1">Did Not Make Playoffs</option>
             <option value="1.25">1st Round</option>
             <option value="1.5">2nd Round</option>
@@ -518,39 +520,39 @@
         <div>
           <h3>
             <label class="checkbox-container">
-              <input type="checkbox" id="bbgm_useOffense" checked onchange="calculateAllUpgrades('bbgm')">
+              <input type="checkbox" id="bbgm_useOffense" checked>
               <span class="checkmark"></span>
               Offense
             </label>
           </h3>
-          <label>Current Rating: <input type="number" id="bbgm_offenseCurrent" value="60" onchange="calculateAllUpgrades('bbgm')"></label>
-          <label>Target Rating: <input type="number" id="bbgm_offenseTarget" value="70" onchange="calculateAllUpgrades('bbgm')"></label>
+          <label>Current Rating: <input type="number" id="bbgm_offenseCurrent" value="60"></label>
+          <label>Target Rating: <input type="number" id="bbgm_offenseTarget" value="70"></label>
           <div class="result">Cost: <span id="bbgm_offenseCost">0</span></div>
         </div>
 
         <div>
           <h3>
             <label class="checkbox-container">
-              <input type="checkbox" id="bbgm_useAthletic" checked onchange="calculateAllUpgrades('bbgm')">
+              <input type="checkbox" id="bbgm_useAthletic" checked>
               <span class="checkmark"></span>
               Athleticism
             </label>
           </h3>
-          <label>Current Rating: <input type="number" id="bbgm_athleticCurrent" value="60" onchange="calculateAllUpgrades('bbgm')"></label>
-          <label>Target Rating: <input type="number" id="bbgm_athleticTarget" value="70" onchange="calculateAllUpgrades('bbgm')"></label>
+          <label>Current Rating: <input type="number" id="bbgm_athleticCurrent" value="60"></label>
+          <label>Target Rating: <input type="number" id="bbgm_athleticTarget" value="70"></label>
           <div class="result">Cost: <span id="bbgm_athleticCost">0</span></div>
         </div>
 
         <div>
           <h3>
             <label class="checkbox-container">
-              <input type="checkbox" id="bbgm_useSkill" checked onchange="calculateAllUpgrades('bbgm')">
+              <input type="checkbox" id="bbgm_useSkill" checked>
               <span class="checkmark"></span>
               Skill
             </label>
           </h3>
-          <label>Current Rating: <input type="number" id="bbgm_skillCurrent" value="60" onchange="calculateAllUpgrades('bbgm')"></label>
-          <label>Target Rating: <input type="number" id="bbgm_skillTarget" value="70" onchange="calculateAllUpgrades('bbgm')"></label>
+          <label>Current Rating: <input type="number" id="bbgm_skillCurrent" value="60"></label>
+          <label>Target Rating: <input type="number" id="bbgm_skillTarget" value="70"></label>
           <div class="result">Cost: <span id="bbgm_skillCost">0</span></div>
         </div>
 
@@ -558,7 +560,7 @@
         <div class="result" id="bbgm_upgradeSummary"></div>
         <button onclick="confirmUpgrade('bbgm')">Confirm Upgrade</button>
         <label>Price Multiplier:
-          <select id="bbgm_priceMultiplier" onchange="calculateAllUpgrades('bbgm')">
+          <select id="bbgm_priceMultiplier">
             <option value="1">Not Valuable (1×)</option>
             <option value="2">Valuable (2×)</option>
             <option value="3">Very Valuable (3×)</option>
@@ -580,7 +582,7 @@
           offense: r => (r < 60 ? 25 : r <= 79 ? 40 : r <= 89 ? 70 : r <= 94 ? 125 : 50),
           mental: r => (r < 60 ? 25 : r <= 79 ? 37 : r <= 89 ? 68 : r <= 94 ? 120 : 45),
           defense: r => (r < 60 ? 25 : r <= 79 ? 51 : r <= 89 ? 85 : r <= 94 ? 135 : 75),
-          athleticism: r => (r < 60 ? 30 : r <= 79 ? 65 : r <= 89 ? 105 : r <= 94 ? 155 : 100)
+          athletic: r => (r < 60 ? 30 : r <= 79 ? 65 : r <= 89 ? 105 : r <= 94 ? 155 : 100) // Changed 'athleticism' to 'athletic'
         },
         upgradeCategories: [
           { key: 'offense', useId: 'useOffense', baseMultiplier: 1.25 },
@@ -596,8 +598,8 @@
         },
         upgradeCostPerPoint: {
           offense: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
-          skill: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
-          athleticism: r => (r < 60 ? 64 : r <= 118 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274)
+          athletic: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274), // Changed 'athleticism' to 'athletic'
+          skill: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347)
         },
         upgradeCategories: [
           { key: 'offense', useId: 'useOffense', baseMultiplier: 1.25 },
@@ -625,14 +627,91 @@
         pointsEarned: document.getElementById(`${prefix}pointsEarned`),
         upgradeSummary: document.getElementById(`${prefix}upgradeSummary`),
         priceMultiplier: document.getElementById(`${prefix}priceMultiplier`),
-        // Upgrade attribute elements (dynamic based on appData.upgradeCategories)
-        getUpgradeElements: (categoryKey) => ({
-          use: document.getElementById(`${prefix}${appData[appId].upgradeCategories.find(c => c.key === categoryKey).useId}`),
-          current: document.getElementById(`${prefix}${categoryKey}Current`),
-          target: document.getElementById(`${prefix}${categoryKey}Target`),
-          costDisplay: document.getElementById(`${prefix}${categoryKey}Cost`)
-        })
+        getUpgradeElements: (categoryKey) => {
+          const categoryConfig = appData[appId].upgradeCategories.find(c => c.key === categoryKey);
+          if (!categoryConfig) {
+            console.error(`[getAppElements] Category config not found for key: ${categoryKey} in ${appId}`);
+            return {};
+          }
+          const useCheckboxId = `${prefix}${categoryConfig.useId}`;
+          return {
+            use: document.getElementById(useCheckboxId),
+            current: document.getElementById(`${prefix}${categoryKey}Current`),
+            target: document.getElementById(`${prefix}${categoryKey}Target`),
+            costDisplay: document.getElementById(`${prefix}${categoryKey}Cost`)
+          };
+        }
       };
+    }
+
+    // Function to attach all event listeners dynamically
+    function attachEventListeners(appId) {
+        const elements = getAppElements(appId);
+
+        // Points Bank input
+        if (elements.manualTotalPoints) {
+            elements.manualTotalPoints.addEventListener('change', () => updatePointsBankDisplay(appId));
+        }
+
+        // Bonus Multipliers
+        if (elements.gameResult) {
+            elements.gameResult.addEventListener('change', () => {
+                toggleOTBox(appId);
+                calculateTotalPoints(appId);
+            });
+        }
+        if (elements.otCount) {
+            elements.otCount.addEventListener('change', () => calculateTotalPoints(appId));
+        }
+        if (elements.opponentType) {
+            elements.opponentType.addEventListener('change', () => calculateTotalPoints(appId));
+        }
+        if (elements.teamHistory) {
+            elements.teamHistory.addEventListener('change', () => calculateTotalPoints(appId));
+        }
+        if (elements.disablePointAdd) {
+            elements.disablePointAdd.addEventListener('change', () => calculateTotalPoints(appId));
+        }
+
+        // Game Stats form inputs (using input event for live updates)
+        if (elements.statsForm) {
+            const statsInputs = elements.statsForm.querySelectorAll('input[type="number"]');
+            statsInputs.forEach(input => {
+                input.addEventListener('input', () => calculateTotalPoints(appId));
+            });
+        }
+        if (elements.basePointsIncrease) {
+            elements.basePointsIncrease.addEventListener('change', () => calculateTotalPoints(appId));
+        }
+
+        // Attribute Upgrade Cost inputs and checkboxes
+        if (elements.priceMultiplier) {
+            elements.priceMultiplier.addEventListener('change', () => calculateAllUpgrades(appId));
+        }
+
+        appData[appId].upgradeCategories.forEach(category => {
+            const upgradeElements = elements.getUpgradeElements(category.key);
+            if (upgradeElements.use) {
+                upgradeElements.use.addEventListener('change', () => calculateAllUpgrades(appId));
+            }
+            if (upgradeElements.current) {
+                upgradeElements.current.addEventListener('change', () => calculateAllUpgrades(appId));
+            }
+            if (upgradeElements.target) {
+                upgradeElements.target.addEventListener('change', () => calculateAllUpgrades(appId));
+            }
+        });
+
+        // Attach event listener for file inputs (Import JSON)
+        const importFileInput = document.getElementById(`${appId}_importFile`);
+        if (importFileInput) {
+            importFileInput.addEventListener('change', (event) => importData(event, appId));
+        }
+        // Main menu file input
+        const mainMenuFileInput = document.getElementById('fileInput');
+        if (mainMenuFileInput) {
+            mainMenuFileInput.addEventListener('change', (event) => handleFile(event));
+        }
     }
 
     // Toggles dark mode for the entire body
@@ -644,21 +723,27 @@
     // Toggles the overtime count input box visibility
     function toggleOTBox(appId) {
       const elements = getAppElements(appId);
-      elements.otCountBox.style.display =
-        elements.gameResult.value === "otwin" ? "block" : "none";
+      if (elements.otCountBox && elements.gameResult) {
+        elements.otCountBox.style.display =
+          elements.gameResult.value === "otwin" ? "block" : "none";
+      }
     }
 
     // Toggles the explanation for bonus multipliers
     function toggleMultiplierInfo(appId) {
       const elements = getAppElements(appId);
       const info = elements.multiplierInfo;
-      info.style.display = info.style.display === "none" ? "block" : "none";
+      if (info) {
+        info.style.display = info.style.display === "none" ? "block" : "none";
+      }
     }
 
     // Updates the displayed points bank value
     function updatePointsBankDisplay(appId) {
       const elements = getAppElements(appId);
-      elements.pointsBankDisplay.innerText = parseInt(elements.manualTotalPoints.value) || 0;
+      if (elements.pointsBankDisplay && elements.manualTotalPoints) {
+        elements.pointsBankDisplay.innerText = parseInt(elements.manualTotalPoints.value) || 0;
+      }
     }
 
     // Calculates points earned from game stats
@@ -668,34 +753,40 @@
       const form = elements.statsForm;
       let earned = 0;
 
-      for (let key in appSpecificData.pointValues) {
-        earned += (parseInt(form[key].value) || 0) * appSpecificData.pointValues[key];
+      if (form) {
+        for (let key in appSpecificData.pointValues) {
+          const input = form[key];
+          if (input) {
+            earned += (parseInt(input.value) || 0) * appSpecificData.pointValues[key];
+          }
+        }
       }
 
-      const baseIncrease = parseInt(elements.basePointsIncrease.value) || 0;
+      const baseIncrease = parseInt(elements.basePointsIncrease?.value || '0') || 0;
       earned += baseIncrease;
 
-      const result = elements.gameResult.value;
-      const opp = parseFloat(elements.opponentType.value);
-      const team = parseFloat(elements.teamHistory.value);
-      const disable = elements.disablePointAdd.checked;
+      const result = elements.gameResult?.value || '';
+      const opp = parseFloat(elements.opponentType?.value) || 1;
+      const team = parseFloat(elements.teamHistory?.value) || 1;
+      const disable = elements.disablePointAdd?.checked || false;
 
       let multiplier = 1;
       if (result === "win") multiplier = 1.5;
       else if (result === "otwin") {
-        const ot = Math.min(6, parseInt(elements.otCount.value) || 1);
+        const ot = Math.min(6, parseInt(elements.otCount?.value || '1') || 1);
         multiplier = 1.5 + (0.1 * ot);
       } else if (result === "otlose") multiplier = 1.25;
 
       const total = Math.round(earned * multiplier * opp * team);
       const bankInput = elements.manualTotalPoints;
-      const newTotal = disable ? parseInt(bankInput.value) : parseInt(bankInput.value) + total;
+      const currentBankValue = parseInt(bankInput?.value || '0') || 0;
+      const newTotal = disable ? currentBankValue : currentBankValue + total;
 
-      if (!disable) bankInput.value = newTotal;
-      elements.pointsBankDisplay.innerText = newTotal;
-      elements.pointsEarned.innerText = total;
+      if (bankInput) bankInput.value = newTotal;
+      if (elements.pointsBankDisplay) elements.pointsBankDisplay.innerText = newTotal;
+      if (elements.pointsEarned) elements.pointsEarned.innerText = total;
 
-      saveCurrentAppData(appId); // Save state after calculation
+      saveCurrentAppData(appId);
     }
 
     // Calculates total cost for attribute upgrades
@@ -704,65 +795,78 @@
       const appSpecificData = appData[appId];
 
       let totalCost = 0;
-      const bank = parseInt(elements.manualTotalPoints.value);
-      const priceMultiplier = parseFloat(elements.priceMultiplier.value);
+      const bank = parseInt(elements.manualTotalPoints?.value || '0') || 0;
+      const priceMultiplier = parseFloat(elements.priceMultiplier?.value) || 1;
 
       for (let category of appSpecificData.upgradeCategories) {
         const upgradeElements = elements.getUpgradeElements(category.key);
-        const current = parseInt(upgradeElements.current.value);
-        const target = parseInt(upgradeElements.target.value);
+        const current = parseInt(upgradeElements.current?.value || '0');
+        const target = parseInt(upgradeElements.target?.value || '0');
         const display = upgradeElements.costDisplay;
-        const useCategory = upgradeElements.use.checked;
+
+        const useCategory = upgradeElements.use ? upgradeElements.use.checked : true;
 
         if (!useCategory) {
-          display.innerText = "Ignored";
+          if (display) display.innerText = "Ignored";
           continue;
         }
 
-        if (isNaN(current) || isNaN(target) || current >= target) {
-          display.innerText = "Invalid";
+        const actualCurrent = isNaN(current) ? 60 : current;
+        const actualTarget = isNaN(target) ? 70 : target;
+
+        if (actualCurrent >= actualTarget) {
+          if (display) display.innerText = "Invalid";
           continue;
         }
 
         let cost = 0;
-        for (let i = current + 1; i <= target; i++) {
-          let baseCost = appSpecificData.upgradeCostPerPoint[category.key](i);
-          cost += baseCost * category.baseMultiplier * priceMultiplier;
+        // Ensure that appSpecificData.upgradeCostPerPoint[category.key] is a function before calling it
+        if (typeof appSpecificData.upgradeCostPerPoint[category.key] === 'function') {
+            for (let i = actualCurrent + 1; i <= actualTarget; i++) {
+                let baseCost = appSpecificData.upgradeCostPerPoint[category.key](i);
+                cost += baseCost * category.baseMultiplier * priceMultiplier;
+            }
+        } else {
+            console.error(`Error: upgradeCostPerPoint for category '${category.key}' is not a function.`);
+            if (display) display.innerText = "Error"; // Indicate an error in the UI
+            continue; // Skip this category to prevent further errors
         }
 
-        display.innerText = Math.round(cost);
+
+        if (display) display.innerText = Math.round(cost);
         totalCost += cost;
       }
 
       const summary = elements.upgradeSummary;
-      summary.innerHTML = `
-        Total Upgrade Cost: ${Math.round(totalCost)}<br>
-        Points Before Upgrade: ${bank}<br>
-        Points After Upgrade: ${bank - Math.round(totalCost)}
-      `;
-      summary.dataset.totalCost = Math.round(totalCost);
+      if (summary) {
+        summary.innerHTML = `
+          Total Upgrade Cost: ${Math.round(totalCost)}<br>
+          Points Before Upgrade: ${bank}<br>
+          Points After Upgrade: ${bank - Math.round(totalCost)}
+        `;
+        summary.dataset.totalCost = Math.round(totalCost);
+      }
 
-      saveCurrentAppData(appId); // Save state after calculation
+      saveCurrentAppData(appId);
     }
 
     // Confirms and applies the attribute upgrade cost
     function confirmUpgrade(appId) {
       const elements = getAppElements(appId);
-      const cost = parseInt(elements.upgradeSummary.dataset.totalCost || "0");
+      const cost = parseInt(elements.upgradeSummary?.dataset.totalCost || "0");
       const bankInput = elements.manualTotalPoints;
-      const currentPoints = parseInt(bankInput.value);
+      const currentPoints = parseInt(bankInput?.value || '0') || 0;
 
       if (cost > currentPoints) {
-        // Use a custom message box instead of alert
         showCustomAlert("Not enough points for upgrade!");
         return;
       }
 
-      bankInput.value = currentPoints - cost;
-      elements.pointsBankDisplay.innerText = bankInput.value;
+      if (bankInput) bankInput.value = currentPoints - cost;
+      if (elements.pointsBankDisplay) elements.pointsBankDisplay.innerText = bankInput.value;
       showCustomAlert("Upgrade applied!");
 
-      saveCurrentAppData(appId); // Save state after upgrade
+      saveCurrentAppData(appId);
     }
 
     // Custom alert function (replaces window.alert)
@@ -794,35 +898,35 @@
       const elements = getAppElements(appId);
       const data = {
         app: appId,
-        totalPoints: elements.manualTotalPoints.value,
-        gameResult: elements.gameResult.value,
-        otCount: elements.otCount.value,
-        opponentType: elements.opponentType.value,
-        teamHistory: elements.teamHistory.value,
-        disablePointAdd: elements.disablePointAdd.checked,
-        basePointsIncrease: elements.basePointsIncrease.value,
+        totalPoints: elements.manualTotalPoints?.value || '0',
+        gameResult: elements.gameResult?.value || '',
+        otCount: elements.otCount?.value || '1',
+        opponentType: elements.opponentType?.value || '',
+        teamHistory: elements.teamHistory?.value || '',
+        disablePointAdd: elements.disablePointAdd?.checked || false,
+        basePointsIncrease: elements.basePointsIncrease?.value || '0',
         stats: {},
         upgrade: {
-          priceMultiplier: elements.priceMultiplier.value
+          priceMultiplier: elements.priceMultiplier?.value || '1'
         }
       };
 
-      // Get stats form data
       const statsForm = elements.statsForm;
-      for (let i = 0; i < statsForm.elements.length; i++) {
-        const el = statsForm.elements[i];
-        if (el.name && el.type !== 'submit') {
-          data.stats[el.name] = el.value;
+      if (statsForm) {
+        for (let i = 0; i < statsForm.elements.length; i++) {
+          const el = statsForm.elements[i];
+          if (el.name && el.type !== 'submit') {
+            data.stats[el.name] = el.value;
+          }
         }
       }
 
-      // Get upgrade data dynamically based on app's categories
       appData[appId].upgradeCategories.forEach(category => {
         const upgradeElements = elements.getUpgradeElements(category.key);
         data.upgrade[category.key] = {
-          current: upgradeElements.current.value,
-          target: upgradeElements.target.value,
-          use: upgradeElements.use.checked
+          current: upgradeElements.current?.value || '0',
+          target: upgradeElements.target?.value || '0',
+          use: upgradeElements.use ? upgradeElements.use.checked : true
         };
       });
 
@@ -849,41 +953,42 @@
 
           const elements = getAppElements(targetAppId);
 
-          elements.manualTotalPoints.value = data.totalPoints || 0;
-          elements.gameResult.value = data.gameResult || 'win';
-          elements.otCount.value = data.otCount || 1;
-          elements.opponentType.value = data.opponentType || '1';
-          elements.teamHistory.value = data.teamHistory || '1';
-          elements.disablePointAdd.checked = data.disablePointAdd || false;
-          elements.basePointsIncrease.value = data.basePointsIncrease || 0;
-          elements.priceMultiplier.value = data.upgrade.priceMultiplier || '1';
+          if (elements.manualTotalPoints) elements.manualTotalPoints.value = data.totalPoints || 0;
+          if (elements.gameResult) elements.gameResult.value = data.gameResult || '';
+          if (elements.otCount) elements.otCount.value = data.otCount || 1;
+          if (elements.opponentType) elements.opponentType.value = data.opponentType || '';
+          if (elements.teamHistory) elements.teamHistory.value = data.teamHistory || '';
+          if (elements.disablePointAdd) elements.disablePointAdd.checked = data.disablePointAdd || false;
+          if (elements.basePointsIncrease) elements.basePointsIncrease.value = data.basePointsIncrease || 0;
+          if (elements.priceMultiplier) elements.priceMultiplier.value = data.upgrade.priceMultiplier || '1';
 
-          // Populate stats form
           const statsForm = elements.statsForm;
-          for (let key in data.stats) {
-            if (statsForm[key]) {
-              statsForm[key].value = data.stats[key];
+          if (statsForm) {
+            for (let key in data.stats) {
+              if (statsForm[key]) {
+                statsForm[key].value = data.stats[key];
+              }
             }
           }
 
-          // Populate upgrade attributes
           appData[targetAppId].upgradeCategories.forEach(category => {
             const upgradeElements = elements.getUpgradeElements(category.key);
             const loadedUpgrade = data.upgrade[category.key];
             if (loadedUpgrade) {
-              upgradeElements.current.value = loadedUpgrade.current;
-              upgradeElements.target.value = loadedUpgrade.target;
-              upgradeElements.use.checked = loadedUpgrade.use;
+              if (upgradeElements.current) upgradeElements.current.value = loadedUpgrade.current;
+              if (upgradeElements.target) upgradeElements.target.value = loadedUpgrade.target;
+              if (upgradeElements.use) {
+                  upgradeElements.use.checked = loadedUpgrade.use;
+              }
             }
           });
 
-          // Trigger calculations to update displays
           toggleOTBox(targetAppId);
           updatePointsBankDisplay(targetAppId);
           calculateTotalPoints(targetAppId);
           calculateAllUpgrades(targetAppId);
 
-          saveCurrentAppData(targetAppId); // Save state after import
+          saveCurrentAppData(targetAppId);
           showCustomAlert("Data imported successfully!");
 
         } catch (err) {
@@ -894,22 +999,47 @@
       reader.readAsText(file);
     }
 
+    // Handles the main menu file input (for importing JSON)
+    function handleFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = JSON.parse(e.target.result);
+                // Determine which app the data belongs to and load it
+                if (data.app === 'nba2k' || data.app === 'bbgm') {
+                    showApp(data.app); // Switch to the correct app
+                    // Delay import slightly to ensure app elements are rendered
+                    setTimeout(() => importData({ target: { files: [file] } }, data.app), 50);
+                } else {
+                    showCustomAlert("The imported JSON file does not contain valid app data (nba2k or bbgm).");
+                }
+            } catch (err) {
+                showCustomAlert("Invalid file format or data structure.");
+                console.error("Import error:", err);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+
     // Shows the selected app section and hides others
     function showApp(appId) {
-      document.getElementById('mainMenu').classList.remove('active');
+      document.getElementById('mainMenu')?.classList.remove('active');
       document.querySelectorAll('.app-section').forEach(el => el.classList.remove('active'));
-      document.getElementById(appId + 'App').classList.add('active');
-      saveToLocal('activeApp', appId); // Save which app is active
+      document.getElementById(appId + 'App')?.classList.add('active');
+      saveToLocal('activeApp', appId);
 
-      // Load data for the newly active app
       loadAppData(appId);
     }
 
     // Returns to the main menu
     function backToMenu() {
       document.querySelectorAll('.app-section').forEach(el => el.classList.remove('active'));
-      document.getElementById('mainMenu').classList.add('active');
-      localStorage.removeItem('mycareer_activeApp'); // Clear active app from local storage
+      document.getElementById('mainMenu')?.classList.add('active');
+      localStorage.removeItem('mycareer_activeApp');
     }
 
     // Redirects to BBGM website
@@ -937,34 +1067,34 @@
     function saveCurrentAppData(appId) {
       const elements = getAppElements(appId);
       const data = {
-        totalPoints: elements.manualTotalPoints.value,
-        gameResult: elements.gameResult.value,
-        otCount: elements.otCount.value,
-        opponentType: elements.opponentType.value,
-        teamHistory: elements.teamHistory.value,
-        disablePointAdd: elements.disablePointAdd.checked,
-        basePointsIncrease: elements.basePointsIncrease.value,
-        priceMultiplier: elements.priceMultiplier.value,
+        totalPoints: elements.manualTotalPoints?.value || '0',
+        gameResult: elements.gameResult?.value || '',
+        otCount: elements.otCount?.value || '1',
+        opponentType: elements.opponentType?.value || '',
+        teamHistory: elements.teamHistory?.value || '',
+        disablePointAdd: elements.disablePointAdd?.checked || false,
+        basePointsIncrease: elements.basePointsIncrease?.value || '0',
+        priceMultiplier: elements.priceMultiplier?.value || '1',
         stats: {},
         upgrade: {}
       };
 
-      // Get stats form data
       const statsForm = elements.statsForm;
-      for (let i = 0; i < statsForm.elements.length; i++) {
-        const el = statsForm.elements[i];
-        if (el.name && el.type !== 'submit') {
-          data.stats[el.name] = el.value;
+      if (statsForm) {
+        for (let i = 0; i < statsForm.elements.length; i++) {
+          const el = statsForm.elements[i];
+          if (el.name && el.type !== 'submit') {
+            data.stats[el.name] = el.value;
+          }
         }
       }
 
-      // Get upgrade data dynamically based on app's categories
       appData[appId].upgradeCategories.forEach(category => {
         const upgradeElements = elements.getUpgradeElements(category.key);
         data.upgrade[category.key] = {
-          current: upgradeElements.current.value,
-          target: upgradeElements.target.value,
-          use: upgradeElements.use.checked
+          current: upgradeElements.current?.value || '0',
+          target: upgradeElements.target?.value || '0',
+          use: upgradeElements.use ? upgradeElements.use.checked : true
         };
       });
 
@@ -974,60 +1104,54 @@
     // Loads all data for a specific app into its fields
     function loadAppData(appId) {
       const data = loadFromLocal(`data_${appId}`);
-      if (data) {
-        const elements = getAppElements(appId);
+      const elements = getAppElements(appId);
 
-        elements.manualTotalPoints.value = data.totalPoints || 0;
-        elements.gameResult.value = data.gameResult || 'win';
-        elements.otCount.value = data.otCount || 1;
-        elements.opponentType.value = data.opponentType || '1';
-        elements.teamHistory.value = data.teamHistory || '1';
-        elements.disablePointAdd.checked = data.disablePointAdd || false;
-        elements.basePointsIncrease.value = data.basePointsIncrease || 0;
-        elements.priceMultiplier.value = data.priceMultiplier || '1';
+      // Apply loaded data or defaults
+      if (elements.manualTotalPoints) elements.manualTotalPoints.value = data?.totalPoints || 1000;
+      if (elements.gameResult) elements.gameResult.value = data?.gameResult || '';
+      if (elements.otCount) elements.otCount.value = data?.otCount || 1;
+      if (elements.opponentType) elements.opponentType.value = data?.opponentType || '';
+      if (elements.teamHistory) elements.teamHistory.value = data?.teamHistory || '';
+      if (elements.disablePointAdd) elements.disablePointAdd.checked = data?.disablePointAdd || false;
+      if (elements.basePointsIncrease) elements.basePointsIncrease.value = data?.basePointsIncrease || 0;
+      if (elements.priceMultiplier) elements.priceMultiplier.value = data?.priceMultiplier || '1';
 
-        // Populate stats form
-        const statsForm = elements.statsForm;
+
+      // Populate stats form
+      const statsForm = elements.statsForm;
+      if (statsForm && data?.stats) {
         for (let key in data.stats) {
           if (statsForm[key]) {
             statsForm[key].value = data.stats[key];
           }
         }
-
-        // Populate upgrade attributes
-        appData[appId].upgradeCategories.forEach(category => {
-          const upgradeElements = elements.getUpgradeElements(category.key);
-          const loadedUpgrade = data.upgrade[category.key];
-          if (loadedUpgrade) {
-            upgradeElements.current.value = loadedUpgrade.current;
-            upgradeElements.target.value = loadedUpgrade.target;
-            upgradeElements.use.checked = loadedUpgrade.use;
-          }
-        });
-
-        // Trigger calculations to update displays
-        toggleOTBox(appId);
-        updatePointsBankDisplay(appId);
-        calculateTotalPoints(appId); // Recalculate points earned
-        calculateAllUpgrades(appId); // Recalculate upgrade costs
-      } else {
-        // If no data, reset to default values and update displays
-        const elements = getAppElements(appId);
-        elements.manualTotalPoints.value = 1000; // Default
-        elements.pointsBankDisplay.innerText = 1000;
-        elements.pointsEarned.innerText = 0;
-        elements.upgradeSummary.innerHTML = '';
-        // Reset form fields to their initial HTML values
-        if (elements.statsForm) elements.statsForm.reset();
-        appData[appId].upgradeCategories.forEach(category => {
-          const upgradeElements = elements.getUpgradeElements(category.key);
-          upgradeElements.current.value = 60;
-          upgradeElements.target.value = 70;
-          upgradeElements.use.checked = true;
-          upgradeElements.costDisplay.innerText = 0;
-        });
-        toggleOTBox(appId); // Ensure OT box is hidden by default
+      } else if (statsForm) {
+        statsForm.reset(); // Reset if no data
       }
+
+      // Populate upgrade attributes
+      appData[appId].upgradeCategories.forEach(category => {
+        const upgradeElements = elements.getUpgradeElements(category.key);
+        const loadedUpgrade = data?.upgrade?.[category.key]; // Use optional chaining
+        if (loadedUpgrade) {
+          if (upgradeElements.current) upgradeElements.current.value = loadedUpgrade.current;
+          if (upgradeElements.target) upgradeElements.target.value = loadedUpgrade.target;
+          if (upgradeElements.use) {
+              upgradeElements.use.checked = loadedUpgrade.use;
+          }
+        } else {
+            // Reset to default if no loaded data for this category
+            if (upgradeElements.current) upgradeElements.current.value = 60;
+            if (upgradeElements.target) upgradeElements.target.value = 70;
+            if (upgradeElements.use) upgradeElements.use.checked = true;
+        }
+      });
+
+      // Trigger calculations to update displays
+      toggleOTBox(appId);
+      updatePointsBankDisplay(appId);
+      calculateTotalPoints(appId);
+      calculateAllUpgrades(appId);
     }
 
     // Initial load on page load
@@ -1036,13 +1160,17 @@
       if (activeApp) {
         showApp(activeApp);
       } else {
-        document.getElementById('mainMenu').classList.add('active');
+        document.getElementById('mainMenu')?.classList.add('active');
       }
 
       const isLightMode = loadFromLocal('darkMode');
       if (isLightMode) {
         document.body.classList.add('light-mode');
       }
+
+      // Attach event listeners for both apps
+      attachEventListeners('nba2k');
+      attachEventListeners('bbgm');
 
       // Generate background particles
       for (let i = 0; i < 100; i++) {
@@ -1051,7 +1179,7 @@
         p.style.left = Math.random() * 100 + 'vw';
         p.style.top = Math.random() * -100 + 'vh';
         p.style.animationDuration = (5 + Math.random() * 10) + 's';
-        document.getElementById('space-bg').appendChild(p);
+        document.getElementById('space-bg')?.appendChild(p);
       }
     };
   </script>
