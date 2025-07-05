@@ -165,23 +165,102 @@
     .top-bar button, .top-bar .file-label { /* Apply margin to buttons and labels in top-bar */
       margin: 5px 5px; /* Adjust margin for better spacing */
     }
+
+    /* Slider Checkbox Styles */
     .checkbox-container {
-      display: inline-block; position: relative; padding-left: 45px;
-      margin-bottom: 12px; cursor: pointer; font-size: 18px;
-      user-select: none; font-weight: normal; color: var(--text);
+      display: flex; /* Use flex to align label text and switch */
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      font-size: 1em;
+      user-select: none;
+      font-weight: normal;
+      color: var(--text);
+      margin-bottom: 5px; /* Reduced margin */
     }
-    .checkbox-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-    .checkmark {
-      position: absolute; top: 0; left: 0; height: 26px; width: 40px;
-      background-color: var(--bg); border-radius: 13px; transition: background-color 0.2s;
+
+    /* Hide default HTML checkbox and remove native appearance */
+    .checkbox-container input[type="checkbox"] { /* CORRECTED SELECTOR */
+      display: none !important; /* Force hide the actual checkbox */
+      -webkit-appearance: none !important; /* For Safari/Chrome (fallback) */
+      -moz-appearance: none !important;    /* For Firefox (fallback) */
+      appearance: none !important;         /* Standard property (fallback) */
     }
-    .checkmark:before {
-      content: ""; position: absolute; height: 20px; width: 20px;
-      left: 3px; bottom: 3px; background-color: white;
-      border-radius: 50%; transition: transform 0.2s;
+
+    /* The switch - the box around the slider */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 30px; /* Reduced width of the switch track */
+      height: 16px; /* Reduced height of the switch track */
+      margin-right: 10px; /* Space between switch and label text */
+      flex-shrink: 0; /* Prevent switch from shrinking */
     }
-    .checkbox-container input:checked + .checkmark { background-color: var(--accent); }
-    .checkbox-container input:checked + .checkmark:before { transform: translateX(14px); }
+
+    /* The slider (track) */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--bg); /* Off state background */
+      -webkit-transition: .4s;
+      transition: .4s;
+      border-radius: 20px; /* Rounded corners for the track */
+      border: 1px solid var(--accent); /* Border for visibility */
+    }
+
+    /* The slider (circle/thumb) */
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px; /* Reduced size of the toggle circle */
+      width: 12px; /* Reduced size of the toggle circle */
+      left: 2px; /* Adjusted position of the toggle circle */
+      bottom: 2px; /* Adjusted position of the toggle circle */
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+      border-radius: 50%; /* Make it round */
+    }
+
+    /* When checkbox is checked */
+    .switch input:checked + .slider { /* This selector is now effectively useless as input is hidden */
+      background-color: var(--accent); /* On state background */
+      border-color: var(--accent);
+    }
+    /* Corrected checked state for slider */
+    .checkbox-container input[type="checkbox"]:checked + .switch .slider {
+      background-color: var(--accent); /* On state background */
+      border-color: var(--accent);
+    }
+
+
+    /* Focus effect */
+    .switch input:focus + .slider { /* This selector is now effectively useless as input is hidden */
+      box-shadow: 0 0 1px var(--accent);
+    }
+    /* Corrected focus effect for slider */
+    .checkbox-container input[type="checkbox"]:focus + .switch .slider {
+      box-shadow: 0 0 1px var(--accent);
+    }
+
+    /* Move slider thumb when checked */
+    .switch input:checked + .slider:before { /* This selector is now effectively useless as input is hidden */
+      -webkit-transform: translateX(16px); /* Adjusted move toggle to the right */
+      -ms-transform: translateX(16px);
+      transform: translateX(16px);
+    }
+    /* Corrected move slider thumb when checked */
+    .checkbox-container input[type="checkbox"]:checked + .switch .slider:before {
+      -webkit-transform: translateX(16px); /* Adjusted move toggle to the right */
+      -ms-transform: translateX(16px);
+      transform: translateX(16px);
+    }
+
+
     @media (max-width: 768px) {
       .app-container, .top-bar { flex-direction: column; }
       .top-bar { align-items: flex-start; }
@@ -283,6 +362,10 @@
         margin-bottom: 15px;
         background-color: var(--bg);
     }
+    .bbgm-attribute-group h3 { /* For category titles */
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
     .bbgm-attribute-group label {
         margin-top: 5px;
         display: flex;
@@ -290,7 +373,7 @@
         align-items: center;
         font-size: 0.95em;
     }
-    .bbgm-attribute-group input[type="number"],
+    .bbgm-attribute-group input[type="text"], /* Changed to text */
     .bbgm-attribute-group select { /* Apply outline to select too */
       padding: 8px;
       margin-top: 5px;
@@ -303,14 +386,14 @@
       color: var(--text);
       outline: none; /* Remove default outline */
     }
-    .bbgm-attribute-group input[type="number"]:focus,
+    .bbgm-attribute-group input[type="text"]:focus, /* Changed to text */
     .bbgm-attribute-group select:focus {
         border-color: var(--highlight); /* Highlight on focus */
         box-shadow: 0 0 5px var(--highlight);
     }
 
     .bbgm-attribute-group label span { /* For Current/Target labels within the flex */
-        min-width: 80px;
+        /* Removed min-width to allow more flexible spacing */
     }
     .bbgm-attribute-group .result {
         text-align: right;
@@ -357,8 +440,8 @@
     <div class="app-container">
       <div class="panel">
         <h2>Points Bank</h2>
-        <label>Total Points Bank: <input type="number" id="nba2k_manualTotalPoints" value="1000"></label>
-        <div class="result">Total Points Bank: <span id="nba2k_pointsBankDisplay">1000</span></div>
+        <label>Total Points Bank: <input type="number" id="nba2k_manualTotalPoints" value="0"></label>
+        <div class="result">Total Points Bank: <span id="nba2k_pointsBankDisplay">0</span></div>
       </div>
 
       <div class="panel">
@@ -395,10 +478,10 @@
 
       <div class="panel">
         <h2>Attribute Upgrade Cost</h2>
-        <div><h3><label class="checkbox-container"><input type="checkbox" id="nba2k_useOffense" checked><span class="checkmark"></span>Offense</label></h3><label>Current Rating: <input type="number" id="nba2k_offenseCurrent" value="60"></label><label>Target Rating: <input type="number" id="nba2k_offenseTarget" value="70"></label><div class="result">Cost: <span id="nba2k_offenseCost">0</span></div></div>
-        <div><h3><label class="checkbox-container"><input type="checkbox" id="nba2k_useDefense" checked><span class="checkmark"></span>Defense</label></h3><label>Current Rating: <input type="number" id="nba2k_defenseCurrent" value="60"></label><label>Target Rating: <input type="number" id="nba2k_defenseTarget" value="70"></label><div class="result">Cost: <span id="nba2k_defenseCost">0</span></div></div>
-        <div><h3><label class="checkbox-container"><input type="checkbox" id="nba2k_useAthletic" checked><span class="checkmark"></span>Athleticism</label></h3><label>Current Rating: <input type="number" id="nba2k_athleticCurrent" value="60"></label><label>Target Rating: <input type="number" id="nba2k_athleticTarget" value="70"></label><div class="result">Cost: <span id="nba2k_athleticCost">0</span></div></div>
-        <div><h3><label class="checkbox-container"><input type="checkbox" id="nba2k_useMental" checked><span class="checkmark"></span>Mental</label></h3><label>Current Rating: <input type="number" id="nba2k_mentalCurrent" value="60"></label><label>Target Rating: <input type="number" id="nba2k_mentalTarget" value="70"></label><div class="result">Cost: <span id="nba2k_mentalCost">0</span></div></div>
+        <div><h3><label class="checkbox-container"><input type="checkbox" id="nba2k_useOffense" checked><span class="switch"><span class="slider"></span></span>Offense</label></h3><label>Current Rating: <input type="number" id="nba2k_offenseCurrent" value="60"></label><label>Target Rating: <input type="number" id="nba2k_offenseTarget" value="70"></label><div class="result">Cost: <span id="nba2k_offenseCost">0</span></div></div>
+        <div><h3><label class="checkbox-container"><input type="checkbox" id="nba2k_useDefense" checked><span class="switch"><span class="slider"></span></span>Defense</label></h3><label>Current Rating: <input type="number" id="nba2k_defenseCurrent" value="60"></label><label>Target Rating: <input type="number" id="nba2k_defenseTarget" value="70"></label><div class="result">Cost: <span id="nba2k_defenseCost">0</span></div></div>
+        <div><h3><label class="checkbox-container"><input type="checkbox" id="nba2k_useAthletic" checked><span class="switch"><span class="slider"></span></span>Athleticism</label></h3><label>Current Rating: <input type="number" id="nba2k_athleticCurrent" value="60"></label><label>Target Rating: <input type="number" id="nba2k_athleticTarget" value="70"></label><div class="result">Cost: <span id="nba2k_athleticCost">0</span></div></div>
+        <div><h3><label class="checkbox-container"><input type="checkbox" id="nba2k_useMental" checked><span class="switch"><span class="slider"></span></span>Mental</label></h3><label>Current Rating: <input type="number" id="nba2k_mentalCurrent" value="60"></label><label>Target Rating: <input type="number" id="nba2k_mentalTarget" value="70"></label><div class="result">Cost: <span id="nba2k_mentalCost">0</span></div></div>
         <button id="nba2k_calculateAllUpgradesBtn">Calculate All Upgrade Costs</button>
         <div class="result" id="nba2k_upgradeSummary"></div>
         <button id="nba2k_confirmUpgradeBtn" class="success">Confirm Upgrade</button>
@@ -427,7 +510,7 @@
         </label>
         <label class="checkbox-container" style="margin-left: 10px;">
             <input type="checkbox" id="bbgm_forceNewPlayerImport">
-            <span class="checkmark"></span>Force New Player Import
+            <span class="switch"><span class="slider"></span></span>Force New Player Import
         </label>
         <button id="bbgm_exportModifiedPlayerBtn">💾 Export Modified Player</button>
       </div>
@@ -435,8 +518,23 @@
     <div class="app-container">
       <div class="panel">
         <h2>Points Bank</h2>
-        <label>Total Points Bank: <input type="number" id="bbgm_manualTotalPoints" value="1000"></label>
-        <div class="result">Total Points Bank: <span id="bbgm_pointsBankDisplay">1000</span></div>
+        <label>Total Points Bank: <input type="number" id="bbgm_manualTotalPoints" value="0"></label>
+        <div class="result">Total Points Bank: <span id="bbgm_pointsBankDisplay">0</span></div>
+      </div>
+
+      <div class="panel">
+        <h2>Player Info & Season Stats</h2>
+        <div class="result">Player Name: <span id="bbgm_playerNameDisplay">N/A</span></div>
+        <div class="result">Position: <span id="bbgm_playerPosDisplay">N/A</span></div>
+        <div class="result">Overall Rating: <span id="bbgm_playerOvrDisplay">N/A</span></div>
+        <div class="result">Potential: <span id="bbgm_playerPotDisplay">N/A</span></div>
+        <label>Select Season for Points:
+            <select id="bbgm_seasonSelect" data-previous-season="">
+                <option value="">- No Player Imported -</option>
+            </select>
+        </label>
+        <div class="result">Points from Season: <span id="bbgm_seasonPointsEarned">0</span></div>
+        <button id="bbgm_addSeasonPointsToBankBtn" class="success">Add Season Points to Bank</button>
       </div>
 
       <div class="panel">
@@ -448,7 +546,7 @@
       </div>
 
       <div class="panel">
-        <h2>Game Stats</h2>
+        <h2>Game Stats (Manual Entry)</h2>
         <form id="bbgm_statsForm">
           <label>Points (gpts): <input type="number" name="gpts" value="0"></label>
           <label>Rebounds (greb): <input type="number" name="greb" value="0"></label>
@@ -465,6 +563,14 @@
       </div>
 
       <div class="panel">
+        <h2>Current Player Ratings</h2>
+        <div id="bbgm_currentRatingsDisplay">
+            <!-- Current ratings will be dynamically populated here -->
+            <p>No player loaded.</p>
+        </div>
+      </div>
+
+      <div class="panel">
         <h2>Attribute Upgrade Cost</h2>
         <label>Quick Select Attribute:
             <select id="bbgm_quickSelectAttribute">
@@ -473,38 +579,38 @@
         </label>
         <!-- Offensive Category -->
         <div id="bbgm_offensiveAttributes" class="bbgm-attribute-group">
-            <h3>Offensive Attributes</h3>
+            <h3><label class="checkbox-container"><input type="checkbox" id="bbgm_useOffensive" checked><span class="switch"><span class="slider"></span></span>Offensive Attributes</label></h3>
             <label>Select Attribute:
                 <select id="bbgm_offensiveAttributeSelect">
                     <!-- Offensive attributes populated here -->
                 </select>
             </label>
-            <label><span>Current:</span> <input type="number" id="bbgm_currentOffensiveAttribute" value="0" readonly></label>
-            <label><span>Target:</span> <input type="number" id="bbgm_targetOffensiveAttribute" value="0" min="0" max="100"></label>
+            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentOffensiveAttribute" value="0" readonly></label>
+            <label><span>Target:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_targetOffensiveAttribute" value="0" min="0" max="100"></label>
             <div class="result">Category Cost: <span id="bbgm_offenseCost">0</span></div>
         </div>
         <!-- Athleticism Category -->
         <div id="bbgm_athleticAttributes" class="bbgm-attribute-group">
-            <h3>Athleticism Attributes</h3>
+            <h3><label class="checkbox-container"><input type="checkbox" id="bbgm_useAthletic" checked><span class="switch"><span class="slider"></span></span>Athleticism Attributes</label></h3>
             <label>Select Attribute:
                 <select id="bbgm_athleticAttributeSelect">
                     <!-- Athleticism attributes populated here -->
                 </select>
             </label>
-            <label><span>Current:</span> <input type="number" id="bbgm_currentAthleticAttribute" value="0" readonly></label>
-            <label><span>Target:</span> <input type="number" id="bbgm_targetAthleticAttribute" value="0" min="0" max="100"></label>
+            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentAthleticAttribute" value="0" readonly></label>
+            <label><span>Target:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_targetAthleticAttribute" value="0" min="0" max="100"></label>
             <div class="result">Category Cost: <span id="bbgm_athleticCost">0</span></div>
         </div>
         <!-- Skill Category -->
         <div id="bbgm_skillAttributes" class="bbgm-attribute-group">
-            <h3>Skill Attributes</h3>
+            <h3><label class="checkbox-container"><input type="checkbox" id="bbgm_useSkill" checked><span class="switch"><span class="slider"></span></span>Skill Attributes</label></h3>
             <label>Select Attribute:
                 <select id="bbgm_skillAttributeSelect">
                     <!-- Skill attributes populated here -->
                 </select>
             </label>
-            <label><span>Current:</span> <input type="number" id="bbgm_currentSkillAttribute" value="0" readonly></label>
-            <label><span>Target:</span> <input type="number" id="bbgm_targetSkillAttribute" value="0" min="0" max="100"></label>
+            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentSkillAttribute" value="0" readonly></label>
+            <label><span>Target:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_targetSkillAttribute" value="0" min="0" max="100"></label>
             <div class="result">Category Cost: <span id="bbgm_skillCost">0</span></div>
         </div>
         <button id="bbgm_calculateAllUpgradesBtn">Calculate All Upgrade Costs</button>
@@ -513,7 +619,7 @@
       </div>
     </div>
     <div class="bottom-bar">
-        <button id="bbgm_showRatingsBtn">📊 Show Current Ratings</button>
+        <!-- The old "Show Current Ratings (Popup)" button has been removed -->
         <button id="bbgm_generateReportBtn">✨ Generate Scouting Report</button>
     </div>
   </div>
@@ -528,7 +634,7 @@
       </div>
       <div class="panel">
         <h2>Startup</h2>
-        <label class="checkbox-container"><input type="checkbox" id="showTutorialOnStartup"><span class="checkmark"></span>Show manual on startup</label>
+        <label class="checkbox-container"><input type="checkbox" id="showTutorialOnStartup"><span class="switch"><span class="slider"></span></span>Show manual on startup</label>
       </div>
       <!-- Add more global settings here -->
     </div>
@@ -537,33 +643,85 @@
   <!-- Manual Section -->
   <div class="app-section" id="manualApp">
     <div class="top-bar"><h1>📚 How to Use MyCareer Tools</h1><button class="backToMenuBtn">⬅ Back to Menu</button></div>
-    <div class="app-container"><div class="panel"><h2>General Usage</h2><ul><li><strong>Import/Export JSON:</strong> Save and load your progress for both simulators.</li><li><strong>Toggle Dark Mode:</strong> Switch between dark and light themes.</li><li><label class="checkbox-container"><input type="checkbox" id="showTutorialOnStartup"><span class="checkmark"></span>Show manual on startup</label></li></ul></div><div class="panel"><h2>NBA 2K23 & BBGM Tools</h2><ul><li><strong>Points Bank:</strong> Manually adjust your total points.</li><li><strong>Bonus Multipliers:</strong> Select game results, opponent type, etc., to apply multipliers.</li><li><strong>Game Stats:</strong> Input stats, click "Calculate Points Earned". The result is shown but <strong>not</strong> added to your bank. Click "Add to Bank" to add the points.</li><li><strong>Attribute Upgrade Cost:</strong> Enter current/target ratings, use checkboxes to select categories, and click "Calculate All Upgrade Costs". Then click "Confirm Upgrade" to spend the points.</li></ul></div><div class="panel"><h2>BBGM Special Features</h2><ul><li><strong>Import BBGM Player:</strong> Load a player JSON file. You can select a season to convert its stats into points, which are automatically added to your bank. The player's current ratings will populate the upgrade fields.</li><li><strong>Export Modified Player:</strong> After upgrading, export a new JSON file with the updated ratings.</li><li><strong>Show Current Ratings:</strong> View a detailed list of the imported player's attributes.</li><li><strong>Generate Scouting Report:</strong> Get an AI-powered scouting report on your imported player.</li></ul></div></div>
+    <div class="app-container">
+      <div class="panel">
+        <h2>General Usage</h2>
+        <ul>
+          <li><strong>Import/Export JSON:</strong> Save and load your progress for both simulators.</li>
+          <li><strong>Toggle Dark Mode:</strong> Switch between dark and light themes.</li>
+          <li><label class="checkbox-container"><input type="checkbox" id="showTutorialOnStartup"><span class="switch"><span class="slider"></span></span>Show manual on startup</label></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>NBA 2K23 & BBGM Tools</h2>
+        <ul>
+          <li><strong>Points Bank:</strong> Manually adjust your total points.</li>
+          <li><strong>Bonus Multipliers:</strong> Select game results, opponent type, etc., to apply multipliers.</li>
+          <li><strong>Game Stats:</strong> Input stats, click "Calculate Points Earned". The result is shown but <strong>not</strong> added to your bank. Click "Add to Bank" to add the points.</li>
+          <li><strong>Attribute Upgrade Cost:</strong> Enter current/target ratings, use checkboxes to select categories, and click "Calculate All Upgrade Costs". Then click "Confirm Upgrade" to spend the points.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>BBGM Special Features</h2>
+        <ul>
+          <li><strong>Import BBGM Player:</strong> Load a player JSON file. You can select a season to convert its stats into points, which are automatically added to your bank. The player's current ratings will populate the upgrade fields.</li>
+          <li><strong>Export Modified Player:</strong> After upgrading, export a new JSON file with the updated ratings.</li>
+          <li><strong>Current Player Ratings Panel:</strong> View a detailed list of the imported player's attributes directly on the page.</li>
+          <li><strong>Generate Scouting Report:</strong> Get an AI-powered scouting report on your imported player.</li>
+        </ul>
+      </div>
+      <!-- New Custom Notes Panel -->
+      <div class="panel">
+        <h2>Your Custom Notes</h2>
+        <div contenteditable="true" style="min-height: 100px; border: 1px solid var(--bg); padding: 10px; border-radius: 5px; background-color: var(--bg); color: var(--text);">
+          <h2>How to use! (BBGM only, some features explained her are usuable in NBA2k version)</h2>
+          <p>The UI is very simple, but: There are 6 panels, 5 at the top and 1 huge one at the bottom. [from left to right]</p>
+          <p>First panel: it shows your total points bank, this shows how much points you have for upgrading your player.</p>
+          <p>Second panel: It shows your player and its overall/potential, name and position. </p>
+          <p>Third panel: Bonus multipliers! These affect your points total, for manual and automatic. It depends on your team's record and placement. A better version of this will be made soon.</p>
+          <p>Fourth panel: Season stats but manual entry, in case the automatic conversion doesnt work, you can use this instead.</p>
+          <p>Fifth panel: Current player ratings: Shows your player's ratings, and it will reflect your upgrades.</p>
+          <p>Sixth, largest panel: For upgrading your player! Use the 3 categories (Offensive, Skills and Athleticism) to pick an attribute and upgrade. A formula for this will be improved later on.</p>
+          <h3>Buttons!</h3>
+          <p>Export/Import JSON: Exports or Imports JSON but its only usable for this site.</p>
+          <p>Import player and convert points/Export modified player: Import your BBGM player (not season) for automatic conversion and upgrades, and once you are done you can export the upgraded player.</p>
+          <p>Generate scouting report: Uses Google's Gemini AI to create a scouting report for your player.</p>
+        </div>
+      </div>
+    </div>
   </div>
   
   <script>
     // --- APP STATE AND CONFIGURATION ---
 
     const VALUABLE_MULTIPLIER = 1.5; // Multiplier for valuable BBGM attributes (3pt, OIQ, DIQ)
-    const PLAYOFF_POINTS_MULTIPLIER = 1.1; // Multiplier for playoff stats points
+    const PLAYOFF_POINTS_MULTIPLIER = 1.15; // Multiplier for playoff stats points
+    const POINTS_PER_GP = 100; // Points for each game played
 
     // Global variable to store the imported BBGM player JSON
     let currentBBGMPlayerJson = null;
     let currentBBGMPlayerId = ""; // Stores the ID of the currently loaded BBGM player (starts blank)
     let bbgmAttributeTargets = {}; // Stores target ratings for all BBGM attributes
+    let currentBBGMSeasonRatings = null; // Stores the ratings object for the currently selected season
+    let bbgmMultiplierWarningShown = false; // Flag to track if multiplier warning has been shown for BBGM
 
     // Default template player for BBGM if no file is imported
     const defaultBBGMPlayer = {
         players: [{
             pid: "default_player_1", // Added a default player ID
-            name: "Template Player",
+            firstName: "Template",
+            lastName: "Player",
             age: 20,
             pos: "PG",
             ovr: 65, // Overall rating
-            ratings: {
+            pot: 75, // Potential rating
+            ratings: [{ // Ratings is now an array, even for the default
+                season: 2024,
                 stre: 50, spd: 60, jmp: 65, endu: 70, // Athleticism
                 ins: 60, dnk: 55, ft: 70, fg: 60, tp: 60, // Offensive
-                oiq: 65, diq: 65, drb: 70, pss: 70, reb: 50 // Skill
-            },
+                oiq: 65, diq: 65, drb: 70, pss: 70, reb: 50, // Skill
+                ovr: 65, pos: "PG", pot: 75 // Added to ratings for consistency, though main player object is source
+            }],
             stats: [ // Basic stats for one season for point conversion
                 {
                     season: 2024,
@@ -611,7 +769,7 @@
             pf: -1, // Personal Fouls (gfls in NBA2K)
             pm: 5, // Plus/Minus
             min: 1, // Minutes
-            gp: 0 // Games Played - setting to 0 as it's not a per-stat point earner like others
+            // gp is handled separately for POINTS_PER_GP
         },
         upgradeCostPerAttribute: {
             stre: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
@@ -630,9 +788,9 @@
             reb: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
         },
         upgradeCategories: [
-          { key: 'offensive', label: 'Offensive', attributes: ['ins', 'dnk', 'ft', 'fg', 'tp'] },
-          { key: 'athletic', label: 'Athleticism', attributes: ['stre', 'spd', 'jmp', 'endu'] },
-          { key: 'skill', label: 'Skill', attributes: ['oiq', 'diq', 'drb', 'pss', 'reb'] }
+          { key: 'offensive', label: 'Offensive', attributes: ['ins', 'dnk', 'ft', 'fg', 'tp'], useId: 'useOffensive' },
+          { key: 'athletic', label: 'Athleticism', attributes: ['stre', 'spd', 'jmp', 'endu'], useId: 'useAthletic' },
+          { key: 'skill', label: 'Skill', attributes: ['oiq', 'diq', 'drb', 'pss', 'reb'], useId: 'useSkill' }
         ],
         // Map attribute keys to more readable labels
         attributeLabels: {
@@ -671,7 +829,7 @@
             }
             return {
                 use: document.getElementById(`${prefix}${categoryConfig.useId}`),
-                costDisplay: document.getElementById(`${prefix}${categoryKey}Cost`),
+                costDisplay: document.getElementById(`${prefix}${categoryConfig.key}Cost`),
                 current: document.getElementById(`${prefix}${categoryKey}Current`),
                 target: document.getElementById(`${prefix}${categoryKey}Target`)
             };
@@ -681,13 +839,27 @@
         elements.playoffPerformance = document.getElementById(`${prefix}playoffPerformance`);
         elements.forceNewPlayerImport = document.getElementById(`${prefix}forceNewPlayerImport`); // New checkbox
         elements.quickSelectAttribute = document.getElementById(`${prefix}quickSelectAttribute`); // New dropdown
+        elements.playerNameDisplay = document.getElementById(`${prefix}playerNameDisplay`); // New
+        elements.playerPosDisplay = document.getElementById(`${prefix}playerPosDisplay`); // New
+        elements.playerOvrDisplay = document.getElementById(`${prefix}playerOvrDisplay`); // New
+        elements.playerPotDisplay = document.getElementById(`${prefix}playerPotDisplay`); // New
+        elements.seasonSelect = document.getElementById(`${prefix}seasonSelect`); // New
+        elements.seasonPointsEarned = document.getElementById(`${prefix}seasonPointsEarned`); // New
+        elements.addSeasonPointsToBankBtn = document.getElementById(`${prefix}addSeasonPointsToBankBtn`); // New
+        elements.currentRatingsDisplay = document.getElementById(`${prefix}currentRatingsDisplay`); // New
         
         // BBGM category-specific attribute selectors and current/target inputs
-        elements.getCategoryAttributeElements = (categoryKey) => {
+        elements.getUpgradeElements = (categoryKey) => { // Renamed from getCategoryAttributeElements to be consistent
+            const categoryConfig = appData[appId].upgradeCategories.find(c => c.key === categoryKey);
+            if (!categoryConfig) {
+                console.error(`[getAppElements] Category config not found for key: ${categoryKey} in ${appId}`);
+                return {};
+            }
             return {
+                use: document.getElementById(`${prefix}${categoryConfig.useId}`),
                 select: document.getElementById(`${prefix}${categoryKey}AttributeSelect`),
-                currentInput: document.getElementById(`${prefix}current${categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1)}Attribute`),
-                targetInput: document.getElementById(`${prefix}target${categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1)}Attribute`),
+                current: document.getElementById(`${prefix}current${categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1)}Attribute`),
+                target: document.getElementById(`${prefix}target${categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1)}Attribute`),
                 costDisplay: document.getElementById(`${prefix}${categoryKey}Cost`)
             };
         };
@@ -722,7 +894,7 @@
         const elements = getAppElements(appId);
         const data = {
             app: appId,
-            totalPoints: elements.manualTotalPoints?.value || '1000',
+            totalPoints: elements.manualTotalPoints?.value || '0', // Changed default to 0
             basePointsIncrease: elements.basePointsIncrease?.value || '0',
             stats: {},
             upgrade: {}
@@ -749,6 +921,15 @@
             data.currentBBGMPlayerJson = currentBBGMPlayerJson; // Save the full player JSON
             data.currentBBGMPlayerId = currentBBGMPlayerId; // Save the current player ID
             data.bbgmAttributeTargets = bbgmAttributeTargets; // Save the global target object
+            data.selectedSeason = elements.seasonSelect?.value || ''; // Save selected season
+
+            // Save the 'use' state for BBGM categories
+            appData[appId].upgradeCategories.forEach(category => {
+                const upgradeElements = elements.getUpgradeElements(category.key);
+                data.upgrade[category.key] = {
+                    use: upgradeElements.use ? upgradeElements.use.checked : false,
+                };
+            });
         }
 
         if (elements.statsForm) {
@@ -764,7 +945,7 @@
         // console.log(`[loadDataIntoApp] Loading data into ${targetAppId} app.`); // Reduced logging
         const elements = getAppElements(targetAppId);
         
-        if (elements.manualTotalPoints) elements.manualTotalPoints.value = data.totalPoints || 1000;
+        if (elements.manualTotalPoints) elements.manualTotalPoints.value = data.totalPoints || 0; // Changed default to 0
         if (elements.basePointsIncrease) elements.basePointsIncrease.value = data.basePointsIncrease || 0;
 
         if (targetAppId === 'nba2k') {
@@ -795,10 +976,43 @@
             // console.log(`[loadDataIntoApp] BBGM Player JSON loaded:`, currentBBGMPlayerJson ? currentBBGMPlayerJson.players[0].name : 'None'); // Reduced logging
             // console.log(`[loadDataIntoApp] BBGM Attribute Targets loaded:`, bbgmAttributeTargets); // Reduced logging
 
+            // Load the 'use' state for BBGM categories
+            if (data.upgrade) {
+                appData[targetAppId].upgradeCategories.forEach(category => {
+                    const upgradeElements = elements.getUpgradeElements(category.key);
+                    const loadedCat = data.upgrade[category.key];
+                    if (loadedCat) {
+                        if (upgradeElements.use) {
+                            upgradeElements.use.checked = loadedCat.use;
+                            // Also disable/enable target input based on loaded 'use' state
+                            if (upgradeElements.target) {
+                                upgradeElements.target.disabled = !loadedCat.use;
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Update player name and overall display
+            updateBBGMPlayerInfoDisplay();
+
             // Ensure BBGM UI is updated before calculating upgrades
             createBBGMIndividualAttributeInputs(); // Re-create inputs if not present
             populateBBGMAttributeQuickSelect(); // Populate quick select dropdown
+            
+            // Set currentBBGMSeasonRatings based on the loaded selected season
+            if (currentBBGMPlayerJson && data.selectedSeason) {
+                currentBBGMSeasonRatings = getRatingsForSeason(parseInt(data.selectedSeason));
+            } else if (currentBBGMPlayerJson) {
+                // If no specific season was saved, default to latest ratings from the player JSON
+                currentBBGMSeasonRatings = getLatestPlayerRatings(currentBBGMPlayerJson.players[0]);
+            } else {
+                currentBBGMSeasonRatings = null;
+            }
+
             updateBBGMCurrentRatingsUI(); // This will also update the displayed current/target inputs based on selected attributes
+            populateBBGMSeasonSelect(data.selectedSeason); // Pass selected season to re-select it
+            calculatePointsFromSelectedSeason(); // Recalculate points for the re-selected season
         }
 
         if (elements.statsForm && data.stats) {
@@ -990,6 +1204,16 @@
             return;
         }
 
+        if (appId === 'bbgm') {
+            const winsCategory = elements.winsCategory?.value || '';
+            const playoffPerformance = elements.playoffPerformance?.value || '';
+            if ((winsCategory === "" || playoffPerformance === "") && !bbgmMultiplierWarningShown) {
+                showMessage("Please select values for 'Regular Season Wins' and 'Playoff Performance' multipliers for extra points. Click 'Add to Bank' again to proceed without multipliers.", 'warning');
+                bbgmMultiplierWarningShown = true; // Set flag to true after first warning
+                return; // Stop execution on first warning
+            }
+        }
+
         const currentBankValue = parseInt(bankInput.value) || 0;
         bankInput.value = currentBankValue + pointsToAdd;
         console.log(`[addPointsToBank] Adding ${pointsToAdd} points. Old bank: ${currentBankValue}, New bank: ${bankInput.value}`);
@@ -997,6 +1221,7 @@
         updatePointsBankDisplay(appId);
         showMessage(`${pointsToAdd} points added to your bank! Total: ${bankInput.value}`, 'success');
         saveCurrentAppData(appId); // Save state after adding points
+        bbgmMultiplierWarningShown = false; // Reset after successful addition
     }
 
     function calculateAllUpgrades(appId) {
@@ -1045,15 +1270,22 @@
             // console.log(`[calculateAllUpgrades] ${category.key} total cost: ${Math.round(categoryTotalCost)}`); // Reduced logging
           }
       } else if (appId === 'bbgm') {
-            if (!currentBBGMPlayerJson) {
+            if (!currentBBGMPlayerJson || !currentBBGMSeasonRatings) {
                 if (elements.upgradeSummary) elements.upgradeSummary.innerHTML = "Load a player to calculate upgrade costs.";
-                console.warn(`[calculateAllUpgrades] BBGM - No player loaded.`);
+                console.warn(`[calculateAllUpgrades] BBGM - No player or season ratings loaded.`);
                 return;
             }
-            const playerRatings = currentBBGMPlayerJson.players[0].ratings;
+            const playerRatings = currentBBGMSeasonRatings; // Use the ratings for the currently selected season
             
             for (let category of appSpecificData.upgradeCategories) {
-                const categoryElements = elements.getCategoryAttributeElements(category.key);
+                const categoryElements = elements.getUpgradeElements(category.key);
+                const useCategory = categoryElements.use ? categoryElements.use.checked : false; // Get state of checkbox
+
+                if (!useCategory) { // If category is not checked, its cost is 0
+                    if (categoryElements.costDisplay) categoryElements.costDisplay.innerText = "Ignored";
+                    continue; // Skip calculation for this category
+                }
+
                 let categoryTotalCost = 0;
 
                 for (const attrKey of category.attributes) {
@@ -1084,7 +1316,7 @@
                 }
                 if (categoryElements.costDisplay) categoryElements.costDisplay.innerText = Math.round(categoryTotalCost);
                 totalCost += categoryTotalCost;
-                // console.log(`[calculateAllUpgrades] BBGM - ${category.key} total cost: ${Math.round(categoryTotalCost)}`); // Reduced logging
+                // console.log(`[calculateAllUpgrades] BBGM - ${category.key} total cost: ${Math.round(totalCost)}`); // Reduced logging
             }
       }
 
@@ -1120,22 +1352,41 @@
 
       if (appId === 'bbgm' && currentBBGMPlayerJson) {
           console.log(`[confirmUpgrade] Applying BBGM player attribute upgrades.`);
-          const playerRatings = currentBBGMPlayerJson.players[0].ratings;
-          const appSpecificData = appData[appId];
+          // IMPORTANT: Apply upgrades to the specific ratings object within the array
+          // Find the ratings object for the currently selected season
+          const selectedSeason = parseInt(elements.seasonSelect.value);
+          const playerRatingsEntry = currentBBGMPlayerJson.players[0].ratings.find(r => r.season === selectedSeason);
 
-          appSpecificData.upgradeCategories.forEach(category => {
-              category.attributes.forEach(attrKey => {
-                  const currentAttrRating = playerRatings[attrKey] || 0;
-                  const targetAttrRating = parseInt(bbgmAttributeTargets[attrKey] || currentAttrRating);
+          if (playerRatingsEntry) {
+              const playerRatings = playerRatingsEntry; // This is the object to modify
+              const appSpecificData = appData[appId];
 
-                  if (targetAttrRating > currentAttrRating) { // Only upgrade if target is higher
-                      playerRatings[attrKey] = Math.min(100, Math.max(0, targetAttrRating)); // Ensure rating stays within 0-100
-                      // console.log(`[confirmUpgrade]   Attribute ${attrKey} set to ${playerRatings[attrKey]}.`); // Reduced logging
+              appSpecificData.upgradeCategories.forEach(category => {
+                  const categoryElements = elements.getUpgradeElements(category.key);
+                  const useCategory = categoryElements.use ? categoryElements.use.checked : false;
+
+                  if (!useCategory) { // If category is not checked, skip applying upgrades for its attributes
+                      return;
                   }
+
+                  category.attributes.forEach(attrKey => {
+                      const currentAttrRating = playerRatings[attrKey] || 0;
+                      const targetAttrRating = parseInt(bbgmAttributeTargets[attrKey] || currentAttrRating);
+
+                      if (targetAttrRating > currentAttrRating) { // Only upgrade if target is higher
+                          playerRatings[attrKey] = Math.min(100, Math.max(0, targetAttrRating)); // Ensure rating stays within 0-100
+                          // console.log(`[confirmUpgrade]   Attribute ${attrKey} set to ${playerRatings[attrKey]}.`); // Reduced logging
+                      }
+                  });
               });
-          });
-          updateBBGMCurrentRatingsUI(); // Refresh UI and recalculate costs based on new ratings
-          showMessage("Upgrade successful! Player ratings have been updated internally.", 'success');
+              // After modifying the ratings, update currentBBGMSeasonRatings to reflect changes
+              currentBBGMSeasonRatings = playerRatings;
+              updateBBGMCurrentRatingsUI(); // Refresh UI and recalculate costs based on new ratings
+              showMessage("Upgrade successful! Player ratings have been updated internally.", 'success');
+          } else {
+              console.error(`[confirmUpgrade] Could not find ratings entry for season ${selectedSeason} to apply upgrades.`);
+              showMessage("Error: Could not apply upgrades to the selected season's ratings.", 'danger');
+          }
       } else {
           showMessage("Upgrade successful!", 'success');
       }
@@ -1190,7 +1441,7 @@
             // Game stats form inputs
             if (elements.statsForm) {
                 Array.from(elements.statsForm.elements).forEach(input => {
-                    if (input.type === 'number' && input.name) {
+                    if ((input.type === 'number' || input.type === 'text') && input.name) { // Handle text type too
                         input.addEventListener('input', () => {
                             // console.log(`[${appId}_statsForm] Input changed for ${input.name}. Recalculating points.`); // Reduced logging
                             calculatePointsEarned(appId);
@@ -1200,7 +1451,17 @@
                 elements.statsForm.addEventListener('submit', (e) => {
                     e.preventDefault(); // Prevent default form submission
                     console.log(`[${appId}_statsForm] Submit button clicked. Recalculating points.`);
+                    if (appId === 'bbgm') { // BBGM specific multiplier warning
+                        const winsCategory = elements.winsCategory?.value || '';
+                        const playoffPerformance = elements.playoffPerformance?.value || '';
+                        if ((winsCategory === "" || playoffPerformance === "") && !bbgmMultiplierWarningShown) {
+                            showMessage("Please select values for 'Regular Season Wins' and 'Playoff Performance' multipliers for extra points. Click 'Calculate Points Earned' again to proceed without multipliers.", 'warning');
+                            bbgmMultiplierWarningShown = true;
+                            return;
+                        }
+                    }
                     calculatePointsEarned(appId);
+                    bbgmMultiplierWarningShown = false; // Reset after successful calculation
                 });
             }
             
@@ -1251,7 +1512,7 @@
                 });
                 document.getElementById('bbgm_playerImportFile').addEventListener('change', handleBBGMPlayerFile); // This one is handled directly by its own function
                 document.getElementById('bbgm_exportModifiedPlayerBtn').addEventListener('click', exportModifiedBBGMPlayer);
-                document.getElementById('bbgm_showRatingsBtn').addEventListener('click', showCurrentBBGMRatings);
+                // Removed event listener for bbgm_showRatingsBtn as it's no longer a popup
                 document.getElementById('bbgm_generateReportBtn').addEventListener('click', generateScoutingReport);
 
                 // BBGM Quick Select Attribute dropdown
@@ -1262,13 +1523,18 @@
                             // Find the category this attribute belongs to
                             const category = appData.bbgm.upgradeCategories.find(cat => cat.attributes.includes(selectedAttrKey));
                             if (category) {
-                                const categorySelect = elements.getCategoryAttributeElements(category.key).select;
-                                if (categorySelect) {
-                                    categorySelect.value = selectedAttrKey; // Set the category dropdown
+                                const categoryElements = elements.getUpgradeElements(category.key);
+                                if (categoryElements.select) {
+                                    categoryElements.select.value = selectedAttrKey; // Set the category dropdown
                                     // Manually trigger change to update current/target inputs
-                                    categorySelect.dispatchEvent(new Event('change'));
+                                    categoryElements.select.dispatchEvent(new Event('change'));
                                 }
                             }
+                            // Call updateBBGMCurrentAndTargetInputs for the specific category of the selected attribute
+                            if (category) {
+                                updateBBGMCurrentAndTargetInputs(category.key);
+                            }
+
                             const targetInput = document.getElementById(`bbgm_target${category.key.charAt(0).toUpperCase() + category.key.slice(1)}Attribute`);
                             if (targetInput) {
                                 targetInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1286,14 +1552,73 @@
                     });
                 }
 
+                // BBGM Season Select and Add Points button
+                if (elements.seasonSelect) elements.seasonSelect.addEventListener('change', calculatePointsFromSelectedSeason);
+                if (elements.addSeasonPointsToBankBtn) elements.addSeasonPointsToBankBtn.addEventListener('click', addSeasonPointsToBank);
+
 
                 if (elements.winsCategory) elements.winsCategory.addEventListener('change', () => {
                     // console.log(`[bbgm_winsCategory] Changed to ${elements.winsCategory.value}. Recalculating points.`); // Reduced logging
-                    calculatePointsEarned('bbgm');
+                    calculatePointsFromSelectedSeason(); // Update season points when multiplier changes
                 });
                 if (elements.playoffPerformance) elements.playoffPerformance.addEventListener('change', () => {
                     // console.log(`[bbgm_playoffPerformance] Changed to ${elements.playoffPerformance.value}. Recalculating points.`); // Reduced logging
-                    calculatePointsEarned('bbgm');
+                    calculatePointsFromSelectedSeason(); // Update season points when multiplier changes
+                });
+
+                // BBGM Category Checkbox and Individual Attribute Input Listeners
+                appData.bbgm.upgradeCategories.forEach(category => {
+                    const categoryElements = elements.getUpgradeElements(category.key);
+                    if (categoryElements.use) { // Listener for the new category checkbox
+                        categoryElements.use.addEventListener('change', () => {
+                            calculateAllUpgrades('bbgm');
+                            // Optionally disable/enable target input for the selected attribute within this category
+                            const targetInput = categoryElements.target;
+                            if (targetInput) {
+                                targetInput.disabled = !categoryElements.use.checked;
+                                if (!categoryElements.use.checked) {
+                                    // If category is excluded, reset its target to current for calculation purposes
+                                    const selectedAttr = categoryElements.select.value;
+                                    if (selectedAttr && currentBBGMSeasonRatings) {
+                                        bbgmAttributeTargets[selectedAttr] = currentBBGMSeasonRatings[selectedAttr] || 0;
+                                        updateBBGMCurrentAndTargetInputs(category.key); // Refresh inputs
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    // Existing listeners for select and target input within this category
+                    if (categoryElements.select) {
+                        categoryElements.select.addEventListener('change', () => {
+                            updateBBGMCurrentAndTargetInputs(category.key);
+                            calculateAllUpgrades('bbgm');
+                        });
+                    }
+                    if (categoryElements.target) {
+                        categoryElements.target.addEventListener('input', () => {
+                            const selectedAttr = categoryElements.select.value;
+                            if (selectedAttr) {
+                                const currentVal = parseInt(categoryElements.current.value) || 0;
+                                let targetVal = parseInt(categoryElements.target.value) || 0;
+                                
+                                // Cap target value at 100
+                                if (targetVal > 100) {
+                                    targetVal = 100;
+                                    categoryElements.target.value = 100; // Update the input field
+                                    showMessage("Target rating cannot exceed 100.", 'warning');
+                                }
+
+                                // Validation for target < current
+                                if (targetVal < currentVal) {
+                                    showMessage(`Target rating (${targetVal}) cannot be less than current rating (${currentVal}).`, 'warning');
+                                    // Do NOT force target to current. Allow user to type, but warn.
+                                }
+
+                                bbgmAttributeTargets[selectedAttr] = targetVal;
+                                calculateAllUpgrades('bbgm');
+                            }
+                        });
+                    }
                 });
             }
         });
@@ -1320,6 +1645,15 @@
       const currentActiveApp = document.querySelector('.app-section.active');
       const mainMenu = document.getElementById('mainMenu');
       const targetApp = document.getElementById(appId + 'App');
+      
+      // Initialize elements here, so it's always defined
+      let elements; 
+      if (appId === 'nba2k' || appId === 'bbgm') {
+          elements = getAppElements(appId);
+      } else {
+          // For global settings or manual, elements might not be needed or are simpler
+          elements = {}; // Provide an empty object or specific elements if needed
+      }
 
       if (currentActiveApp) {
           currentActiveApp.classList.remove('active');
@@ -1358,15 +1692,37 @@
                   currentBBGMPlayerId = defaultBBGMPlayer.players[0].pid; // Set ID for default player
                   
                   // Initialize bbgmAttributeTargets with default player's current ratings
-                  for (const category of appData.bbgm.upgradeCategories) {
-                      for (const attrKey of category.attributes) {
-                          bbgmAttributeTargets[attrKey] = defaultBBGMPlayer.players[0].ratings[attrKey] || 0;
+                  currentBBGMSeasonRatings = getLatestPlayerRatings(currentBBGMPlayerJson.players[0]);
+                  for (const attrKey in currentBBGMSeasonRatings) { // Iterate through current season ratings
+                      if (appData.bbgm.attributeLabels.hasOwnProperty(attrKey)) { // Only include valid attributes
+                          bbgmAttributeTargets[attrKey] = currentBBGMSeasonRatings[attrKey] || 0;
                       }
                   }
                   saveCurrentAppData('bbgm'); // Save the template player and initial targets to local storage
               }
+              populateBBGMSeasonSelect(); // Populate and select latest season first
+              // Now get ratings for the selected season (which is the latest by default after populate)
+              const selectedSeason = parseInt(elements.seasonSelect.value);
+              currentBBGMSeasonRatings = getRatingsForSeason(selectedSeason);
+
+              updateBBGMPlayerInfoDisplay(); // Update player name and overall
               updateBBGMCurrentRatingsUI(); // Ensure BBGM current ratings are updated on app switch
               calculateAllUpgrades('bbgm'); // Calculate initial cost for selected attribute
+              calculatePointsFromSelectedSeason(); // Calculate points from selected season
+
+              // Force New Player Import checkbox behavior on app load
+              const forceNewPlayerImportCheckbox = elements.forceNewPlayerImport;
+              if (forceNewPlayerImportCheckbox) {
+                  // Only set to true if NO player is currently loaded
+                  if (!currentBBGMPlayerJson || currentBBGMPlayerId === "") {
+                      forceNewPlayerImportCheckbox.checked = true;
+                      console.log("Force New Player Import set to true as no player is loaded.");
+                  } else {
+                      forceNewPlayerImportCheckbox.checked = false; // Ensure it's off if a player is loaded
+                      console.log("Force New Player Import set to false as a player is already loaded.");
+                  }
+              }
+
           }
       } else {
           console.error(`[showApp] Target app section with ID '${appId}App' not found.`);
@@ -1437,58 +1793,79 @@
     
     // --- BBGM-SPECIFIC FUNCTIONS ---
 
+    // Function to get the latest ratings object from the player's ratings array
+    function getLatestPlayerRatings(player) {
+        if (!player || !player.ratings || player.ratings.length === 0) {
+            return null;
+        }
+        // Find the rating entry with the highest season number
+        const latestRatingEntry = player.ratings.reduce((latest, current) => {
+            return (current.season || 0) > (latest.season || 0) ? current : latest;
+        }, player.ratings[0]); // Start with the first element as initial latest
+
+        // Return a copy of the ratings within that entry, excluding 'season' and 'skills'
+        const { season, skills, ...actualRatings } = latestRatingEntry;
+        return actualRatings;
+    }
+
+    // Function to get ratings for a specific season
+    function getRatingsForSeason(season) {
+        if (!currentBBGMPlayerJson || !currentBBGMPlayerJson.players || !currentBBGMPlayerJson.players[0].ratings) {
+            return null;
+        }
+        const player = currentBBGMPlayerJson.players[0];
+        const ratingsEntry = player.ratings.find(r => r.season === season);
+        if (ratingsEntry) {
+            const { season, skills, ...actualRatings } = ratingsEntry; // Exclude season and skills
+            return actualRatings;
+        }
+        return null;
+    }
+
+    // Function to update player name, position, overall, and potential display
+    function updateBBGMPlayerInfoDisplay() {
+        const elements = getAppElements('bbgm');
+        if (currentBBGMPlayerJson && currentBBGMPlayerJson.players && currentBBGMPlayerJson.players[0]) {
+            const player = currentBBGMPlayerJson.players[0];
+            
+            // Get OVR, POS, POT from the currently selected season's ratings
+            const selectedSeason = parseInt(elements.seasonSelect.value);
+            const currentSeasonRatings = getRatingsForSeason(selectedSeason);
+
+            elements.playerNameDisplay.innerText = `${player.firstName || ''} ${player.lastName || ''}`.trim() || 'N/A';
+            elements.playerPosDisplay.innerText = currentSeasonRatings?.pos || player.pos || 'N/A';
+            elements.playerOvrDisplay.innerText = currentSeasonRatings?.ovr || player.ovr || 'N/A';
+            elements.playerPotDisplay.innerText = currentSeasonRatings?.pot || player.pot || 'N/A';
+        } else {
+            elements.playerNameDisplay.innerText = 'N/A';
+            elements.playerPosDisplay.innerText = 'N/A';
+            elements.playerOvrDisplay.innerText = 'N/A';
+            elements.playerPotDisplay.innerText = 'N/A';
+        }
+    }
+
     // Function to create individual attribute input fields for BBGM
     function createBBGMIndividualAttributeInputs() {
         // console.log("[createBBGMIndividualAttributeInputs] Called."); // Reduced logging
         const appSpecificData = appData.bbgm;
 
         appSpecificData.upgradeCategories.forEach(category => {
-            const categorySelectId = `bbgm_${category.key}AttributeSelect`;
-            const currentInputId = `bbgm_current${category.key.charAt(0).toUpperCase() + category.key.slice(1)}Attribute`;
-            const targetInputId = `bbgm_target${category.key.charAt(0).toUpperCase() + category.key.slice(1)}Attribute`;
-
-            let categorySelect = document.getElementById(categorySelectId);
-            let currentInput = document.getElementById(currentInputId);
-            let targetInput = document.getElementById(targetInputId);
+            const categoryElements = getAppElements('bbgm').getUpgradeElements(category.key);
 
             // Populate category select dropdown
-            if (categorySelect) {
-                categorySelect.innerHTML = ''; // Clear existing options
+            if (categoryElements.select) {
+                categoryElements.select.innerHTML = ''; // Clear existing options
                 category.attributes.forEach(attrKey => {
                     const option = document.createElement('option');
                     option.value = attrKey;
                     option.innerText = appSpecificData.attributeLabels[attrKey] || attrKey.toUpperCase();
-                    categorySelect.appendChild(option);
+                    categoryElements.select.appendChild(option);
                 });
 
                 // Set initial selection if already stored, otherwise select the first attribute
-                if (!categorySelect.value && category.attributes.length > 0) {
-                    categorySelect.value = category.attributes[0];
+                if (!categoryElements.select.value && category.attributes.length > 0) {
+                    categoryElements.select.value = category.attributes[0];
                 }
-
-                // Add event listener for category select dropdown
-                categorySelect.onchange = () => {
-                    updateBBGMCurrentAndTargetInputs(category.key);
-                    calculateAllUpgrades('bbgm');
-                };
-            }
-
-            // Add event listener for target input
-            if (targetInput) {
-                targetInput.oninput = () => {
-                    const selectedAttr = categorySelect.value;
-                    if (selectedAttr) {
-                        // Ensure target is not less than current
-                        const currentVal = parseInt(currentInput.value) || 0;
-                        let targetVal = parseInt(targetInput.value) || 0;
-                        if (targetVal < currentVal) {
-                            targetVal = currentVal;
-                            targetInput.value = currentVal;
-                        }
-                        bbgmAttributeTargets[selectedAttr] = targetVal; // Update global target
-                        calculateAllUpgrades('bbgm');
-                    }
-                };
             }
             // console.log(`[createBBGMIndividualAttributeInputs] Inputs and listeners set for ${category.key}.`); // Reduced logging
         });
@@ -1498,29 +1875,30 @@
     function updateBBGMCurrentAndTargetInputs(categoryKey) {
         // console.log(`[updateBBGMCurrentAndTargetInputs] Updating inputs for category: ${categoryKey}`); // Reduced logging
         const elements = getAppElements('bbgm');
-        const categoryElements = elements.getCategoryAttributeElements(categoryKey);
+        const categoryElements = elements.getUpgradeElements(categoryKey);
         
         const selectedAttr = categoryElements.select.value;
-        if (!selectedAttr || !currentBBGMPlayerJson) {
-            categoryElements.currentInput.value = 0;
-            categoryElements.targetInput.value = 0;
+        if (!selectedAttr || !currentBBGMPlayerJson || !currentBBGMSeasonRatings) {
+            categoryElements.current.value = 0;
+            categoryElements.target.value = 0;
             return;
         }
 
-        const playerRatings = currentBBGMPlayerJson.players[0].ratings;
+        const playerRatings = currentBBGMSeasonRatings; // Use the currently selected season's ratings
         const currentRating = playerRatings[selectedAttr] !== undefined ? playerRatings[selectedAttr] : 0;
         
         // Use the stored target rating, or default to current if not set
         let targetRating = bbgmAttributeTargets[selectedAttr] !== undefined ? bbgmAttributeTargets[selectedAttr] : currentRating;
 
-        // Ensure target is never less than current
-        if (targetRating < currentRating) {
-            targetRating = currentRating;
-            bbgmAttributeTargets[selectedAttr] = currentRating; // Update stored target
-        }
+        // Ensure target is never less than current, and never more than 100
+        targetRating = Math.min(100, Math.max(currentRating, targetRating));
 
-        categoryElements.currentInput.value = currentRating;
-        categoryElements.targetInput.value = targetRating;
+        categoryElements.current.value = currentRating;
+        categoryElements.target.value = targetRating;
+        // Also update the disabled state of the target input based on the category checkbox
+        if (categoryElements.use) {
+            categoryElements.target.disabled = !categoryElements.use.checked;
+        }
         // console.log(`[updateBBGMCurrentAndTargetInputs] ${selectedAttr}: Current=${currentRating}, Target=${targetRating}`); // Reduced logging
     }
 
@@ -1568,81 +1946,76 @@
                 const importedJson = JSON.parse(e.target.result);
                 console.log("[handleBBGMPlayerFile] Imported JSON parsed.");
 
-                if (!importedJson.players?.[0]?.stats || !importedJson.players?.[0]?.ratings) {
-                    showMessage("Invalid BBGM player file: Missing stats or ratings data.", 'danger'); 
-                    console.error("[handleBBGMPlayerFile] Invalid player file structure: Missing stats or ratings.");
+                // Ensure the 'ratings' property is an array as per the user's JSON example
+                if (!importedJson.players?.[0]?.stats || !Array.isArray(importedJson.players?.[0]?.ratings)) {
+                    showMessage("Invalid BBGM player file: Missing stats or 'ratings' is not an array.", 'danger'); 
+                    console.error("[handleBBGMPlayerFile] Invalid player file structure: Missing stats or ratings array.");
                     event.target.value = ''; // Clear file input
                     return;
                 }
 
-                const incomingPlayerId = importedJson.players[0].pid || `${importedJson.players[0].name}_${importedJson.players[0].age}_${importedJson.players[0].pos}`;
+                const incomingPlayerId = importedJson.players[0].pid || `${importedJson.players[0].firstName}_${importedJson.players[0].lastName}_${importedJson.players[0].age}_${importedJson.players[0].pos}`;
                 const elements = getAppElements('bbgm');
                 const forceNewPlayerImportCheckbox = elements.forceNewPlayerImport;
 
                 // Check if a player is already loaded AND the IDs mismatch AND force checkbox is NOT checked
                 if (currentBBGMPlayerId !== "" && currentBBGMPlayerId !== incomingPlayerId) {
                     if (!forceNewPlayerImportCheckbox.checked) {
-                        showMessage(`Player ID mismatch! Currently loaded: ${currentBBGMPlayerJson?.players[0]?.name || 'None'} (ID: ${currentBBGMPlayerId}). Imported: ${importedJson.players[0].name} (ID: ${incomingPlayerId}). Check 'Force New Player Import' to continue.`, 'danger');
+                        showMessage(`Player ID mismatch! Currently loaded: ${currentBBGMPlayerJson?.players[0]?.firstName || ''} ${currentBBGMPlayerJson?.players[0]?.lastName || ''} (ID: ${currentBBGMPlayerId}). Imported: ${importedJson.players[0].firstName} ${importedJson.players[0].lastName} (ID: ${incomingPlayerId}). Check 'Force New Player Import' to continue.`, 'danger');
                         event.target.value = ''; // Clear file input
                         return;
                     } else {
-                        showMessage(`Warning: Importing a new player (${importedJson.players[0].name}) and overwriting current player.`, 'warning');
+                        showMessage(`Warning: Importing a new player (${importedJson.players[0].firstName} ${importedJson.players[0].lastName}) and overwriting current player.`, 'warning');
                     }
                 }
                 
                 currentBBGMPlayerJson = importedJson;
                 currentBBGMPlayerId = incomingPlayerId; // Update the current player ID
 
-                // Initialize bbgmAttributeTargets with current player ratings
-                bbgmAttributeTargets = {};
-                for (const category of appData.bbgm.upgradeCategories) {
-                    for (const attrKey of category.attributes) {
-                        bbgmAttributeTargets[attrKey] = currentBBGMPlayerJson.players[0].ratings[attrKey] || 0;
-                    }
-                }
-                // console.log("[handleBBGMPlayerFile] bbgmAttributeTargets initialized with current player ratings:", bbgmAttributeTargets); // Reduced logging
-
-
-                const seasonsData = {};
-                currentBBGMPlayerJson.players[0].stats.forEach(s => {
-                    if (!s.season) return; // Skip if season is undefined
-                    if (!seasonsData[s.season]) seasonsData[s.season] = { regular: null, playoffs: null };
-                    if (s.playoffs) seasonsData[s.season].playoffs = s;
-                    else seasonsData[s.season].regular = s;
-                });
-                // console.log("[handleBBGMPlayerFile] Seasons data extracted:", seasonsData); // Reduced logging
-
-                let selectedPoints = 0;
-                let seasonUsed = "N/A";
-                if (Object.keys(seasonsData).length > 0) {
-                    const firstSeason = Object.keys(seasonsData)[0];
-                    seasonUsed = firstSeason;
-                    if (seasonsData[firstSeason].regular) selectedPoints += calculatePointsFromBBGMStats(seasonsData[firstSeason].regular);
-                    if (seasonsData[firstSeason].playoffs) selectedPoints += calculatePointsFromBBGMStats(seasonsData[firstSeason].playoffs) * PLAYOFF_POINTS_MULTIPLIER;
-                    selectedPoints = Math.round(selectedPoints);
-                    // console.log(`[handleBBGMPlayerFile] Automatically selected points from season ${firstSeason}: ${selectedPoints} points.`); // Reduced logging
-                    if (Object.keys(seasonsData).length > 1) {
-                        console.warn("[handleBBGMPlayerFile] Multiple seasons found. Auto-selected the first one. Manual selection is not available.");
-                    }
-                } else {
-                    console.warn("[handleBBGMPlayerFile] No valid seasons with stats found in the player file.");
-                }
+                // After setting currentBBGMPlayerJson, populate season select and then update player info
+                populateBBGMSeasonSelect(); // Populate and select latest season first
+                // Now get ratings for the selected season (which is the latest by default after populate)
+                const selectedSeason = parseInt(elements.seasonSelect.value);
+                currentBBGMSeasonRatings = getRatingsForSeason(selectedSeason);
                 
-                const currentBank = parseInt(elements.manualTotalPoints.value) || 0;
-                elements.manualTotalPoints.value = currentBank + selectedPoints;
-                updatePointsBankDisplay('bbgm');
-                showMessage(`Imported player "${currentBBGMPlayerJson.players[0].name || 'Unnamed Player'}" (ID: ${currentBBGMPlayerId}). Added ${selectedPoints} points to your bank! New total: ${elements.manualTotalPoints.value}`, 'success');
-                console.log(`[handleBBGMPlayerFile] Points added to bank: ${selectedPoints}. New bank: ${elements.manualTotalPoints.value}`);
+                bbgmAttributeTargets = {};
+                if (currentBBGMSeasonRatings) {
+                    for (const attrKey in currentBBGMSeasonRatings) {
+                        if (appData.bbgm.attributeLabels.hasOwnProperty(attrKey)) { // Only include valid attributes
+                            bbgmAttributeTargets[attrKey] = currentBBGMSeasonRatings[attrKey] || 0;
+                        }
+                    }
+                }
+                // console.log("[handleBBGMPlayerFile] bbgmAttributeTargets initialized with latest player ratings:", bbgmAttributeTargets); // Reduced logging
+
+                updateBBGMPlayerInfoDisplay(); // Update player name, OVR, POS, POT display based on selected season
+                calculatePointsFromSelectedSeason(); // Calculate points for the initially selected (latest) season
+                
+                // The points are now added via the "Add Season Points to Bank" button, not automatically here.
+                showMessage(`Imported player "${currentBBGMPlayerJson.players[0].firstName || ''} ${currentBBGMPlayerJson.players[0].lastName || ''}". Select a season to add points.`, 'success');
                 
                 updateBBGMCurrentRatingsUI(); // Always update UI after player import attempt
                 calculateAllUpgrades('bbgm'); // Calculate cost for the newly loaded player's selected attribute
                 saveCurrentAppData('bbgm'); // Save the updated player JSON and points
+
+                // Turn off "Force New Player Import" after successful import
+                elements.forceNewPlayerImport.checked = false;
+
             } catch (err) {
                 showMessage("Error processing player file. Check console for details.", 'danger'); 
                 console.error("[handleBBGMPlayerFile] Error:", err);
                 currentBBGMPlayerJson = null; // Clear player if error
                 currentBBGMPlayerId = ""; // Clear player ID if error
                 bbgmAttributeTargets = {}; // Clear targets if error
+                currentBBGMSeasonRatings = null; // Clear season ratings
+                // Reset player name and overall display on error
+                const elements = getAppElements('bbgm');
+                if (elements.playerNameDisplay) elements.playerNameDisplay.innerText = 'N/A';
+                if (elements.playerPosDisplay) elements.playerPosDisplay.innerText = 'N/A';
+                if (elements.playerOvrDisplay) elements.playerOvrDisplay.innerText = 'N/A';
+                if (elements.playerPotDisplay) elements.playerPotDisplay.innerText = 'N/A';
+                if (elements.seasonSelect) elements.seasonSelect.innerHTML = '<option value="">- No Player Imported -</option>'; // Clear season select
+                if (elements.seasonPointsEarned) elements.seasonPointsEarned.innerText = '0'; // Reset season points
             }
         };
         reader.onerror = (e) => {
@@ -1654,24 +2027,200 @@
         console.log(`[handleBBGMPlayerFile] FileReader initiated for ${file.name}.`);
     }
 
+    // New function to populate the season selection dropdown
+    function populateBBGMSeasonSelect(selectedSeasonToRestore = null) {
+        const elements = getAppElements('bbgm');
+        const seasonSelect = elements.seasonSelect;
+        seasonSelect.innerHTML = ''; // Clear existing options
+
+        if (!currentBBGMPlayerJson || !currentBBGMPlayerJson.players || !currentBBGMPlayerJson.players[0].stats) {
+            seasonSelect.innerHTML = '<option value="">- No Player Imported -</option>';
+            return;
+        }
+
+        const availableSeasons = new Set();
+        // Collect seasons from both stats and ratings arrays
+        currentBBGMPlayerJson.players[0].stats.forEach(s => {
+            if (s.season) {
+                availableSeasons.add(s.season);
+            }
+        });
+        currentBBGMPlayerJson.players[0].ratings.forEach(r => {
+            if (r.season) {
+                availableSeasons.add(r.season);
+            }
+        });
+
+
+        const sortedSeasons = Array.from(availableSeasons).sort((a, b) => b - a); // Sort descending to get latest first
+
+        if (sortedSeasons.length === 0) {
+            seasonSelect.innerHTML = '<option value="">- No Stats Available -</option>';
+            return;
+        }
+
+        sortedSeasons.forEach(season => {
+            const option = document.createElement('option');
+            option.value = season;
+            option.innerText = season;
+            seasonSelect.appendChild(option);
+        });
+
+        // Select the latest season by default, or restore previously selected
+        if (selectedSeasonToRestore && sortedSeasons.includes(parseInt(selectedSeasonToRestore))) {
+            seasonSelect.value = selectedSeasonToRestore;
+        } else {
+            seasonSelect.value = sortedSeasons[0]; // Select the latest season
+        }
+        // Update previousSeason immediately after setting the value
+        seasonSelect.dataset.previousSeason = seasonSelect.value;
+    }
+
+    // New function to calculate points from the currently selected season
+    function calculatePointsFromSelectedSeason() {
+        const elements = getAppElements('bbgm');
+        const seasonSelect = elements.seasonSelect;
+        const newSelectedSeason = parseInt(seasonSelect.value);
+        const oldSelectedSeason = parseInt(seasonSelect.dataset.previousSeason); // Get previous from data attribute
+
+        if (!currentBBGMPlayerJson || !currentBBGMPlayerJson.players || !currentBBGMPlayerJson.players[0].stats || isNaN(newSelectedSeason)) {
+            elements.seasonPointsEarned.innerText = '0';
+            elements.seasonPointsEarned.dataset.points = '0';
+            seasonSelect.dataset.previousSeason = newSelectedSeason; // Still update previous season
+            // Also update current ratings UI to reflect "no player loaded" or similar
+            currentBBGMSeasonRatings = null;
+            updateBBGMCurrentRatingsUI();
+            return;
+        }
+
+        let totalPoints = 0;
+        let shouldCalculateSingleSeason = true; // Flag to determine if we calculate just the new season
+
+        // Only show warnings if a previous season was actually selected AND it's different from the new one
+        if (!isNaN(oldSelectedSeason) && oldSelectedSeason !== newSelectedSeason) {
+            if (newSelectedSeason < oldSelectedSeason) {
+                // Going back a year
+                if (!confirm(`Are you sure you want to go back to season ${newSelectedSeason}? This will recalculate points based on that season's stats.`)) {
+                    seasonSelect.value = oldSelectedSeason; // Revert selection in UI
+                    // Re-trigger UI update for the reverted season
+                    currentBBGMSeasonRatings = getRatingsForSeason(oldSelectedSeason);
+                    updateBBGMCurrentRatingsUI();
+                    // Crucially, update the dataset.previousSeason to the *reverted* value
+                    seasonSelect.dataset.previousSeason = oldSelectedSeason;
+                    return; // Stop execution
+                }
+            } else if (newSelectedSeason > oldSelectedSeason + 1) {
+                // Jumping forward multiple seasons
+                const confirmMultiSeason = confirm(`You are jumping forward multiple seasons (from ${oldSelectedSeason} to ${newSelectedSeason}). Do you want to include stats from intermediate seasons (${oldSelectedSeason + 1} to ${newSelectedSeason}) for point calculation?`);
+                
+                if (confirmMultiSeason) {
+                    for (let year = oldSelectedSeason + 1; year <= newSelectedSeason; year++) {
+                        totalPoints += getPointsForSingleBBGMSeason(year);
+                    }
+                    shouldCalculateSingleSeason = false; // Multi-season points already calculated
+                }
+            }
+        }
+        
+        // If shouldCalculateSingleSeason is still true (no multi-season calculation or if multi-year jump was declined), calculate for the single new season
+        if (shouldCalculateSingleSeason) {
+             totalPoints += getPointsForSingleBBGMSeason(newSelectedSeason);
+        }
+        
+        elements.seasonPointsEarned.innerText = Math.round(totalPoints);
+        elements.seasonPointsEarned.dataset.points = Math.round(totalPoints);
+        seasonSelect.dataset.previousSeason = newSelectedSeason; // Update previous season for next comparison
+        saveCurrentAppData('bbgm'); // Save selected season and calculated points
+
+        // Update the current ratings display and upgrade inputs based on the newly selected season
+        currentBBGMSeasonRatings = getRatingsForSeason(newSelectedSeason);
+        updateBBGMCurrentRatingsUI();
+    }
+
+    // Helper function to get points for a single BBGM season
+    function getPointsForSingleBBGMSeason(seasonYear) {
+        let seasonPoints = 0;
+        const seasonStats = currentBBGMPlayerJson.players[0].stats.filter(s => s.season === seasonYear);
+        
+        let regularSeasonStats = seasonStats.find(s => !s.playoffs);
+        let playoffStats = seasonStats.find(s => s.playoffs);
+
+        // Get multipliers from UI
+        const elements = getAppElements('bbgm');
+        const winsCategory = elements.winsCategory?.value || '';
+        const playoffPerformance = elements.playoffPerformance?.value || '';
+        const winsMult = parseFloat(winsCategory) || 1;
+        const playoffMult = parseFloat(playoffPerformance) || 1;
+        const combinedMultiplier = winsMult * playoffMult;
+
+
+        // Add points from regular season stats
+        if (regularSeasonStats) {
+            seasonPoints += calculatePointsFromBBGMStats(regularSeasonStats) * combinedMultiplier; // Apply multipliers
+            // Add points for games played (GP) in regular season
+            seasonPoints += (regularSeasonStats.gp || 0) * POINTS_PER_GP * combinedMultiplier; // Apply multipliers
+        }
+        // Add points from playoff stats with multiplier
+        if (playoffStats) {
+            seasonPoints += calculatePointsFromBBGMStats(playoffStats) * PLAYOFF_POINTS_MULTIPLIER * combinedMultiplier; // Apply both multipliers
+            // Add points for games played (GP) in playoffs (also multiplied)
+            seasonPoints += (playoffStats.gp || 0) * POINTS_PER_GP * PLAYOFF_POINTS_MULTIPLIER * combinedMultiplier; // Apply both multipliers
+        }
+        return seasonPoints;
+    }
+
+    // New function to add calculated season points to the bank
+    function addSeasonPointsToBank() {
+        const elements = getAppElements('bbgm');
+        
+        const winsCategory = elements.winsCategory?.value || '';
+        const playoffPerformance = elements.playoffPerformance?.value || '';
+        if ((winsCategory === "" || playoffPerformance === "") && !bbgmMultiplierWarningShown) {
+            showMessage("Please select values for 'Regular Season Wins' and 'Playoff Performance' multipliers for extra points. Click 'Add Season Points to Bank' again to proceed without multipliers.", 'warning');
+            bbgmMultiplierWarningShown = true; // Set flag to true after first warning
+            return; // Stop execution on first warning
+        }
+
+        const pointsToAdd = parseInt(elements.seasonPointsEarned?.dataset.points || '0');
+        const bankInput = elements.manualTotalPoints;
+
+        if (!bankInput) {
+            console.error(`[addSeasonPointsToBank] Points bank input not found for bbgm.`);
+            return;
+        }
+
+        const currentBankValue = parseInt(bankInput.value) || 0;
+        bankInput.value = currentBankValue + pointsToAdd;
+        updatePointsBankDisplay('bbgm');
+        showMessage(`${pointsToAdd} points from season ${elements.seasonSelect.value} added to your bank! Total: ${bankInput.value}`, 'success');
+        saveCurrentAppData('bbgm');
+        bbgmMultiplierWarningShown = false; // Reset after successful addition
+    }
+
+
     function updateBBGMCurrentRatingsUI() {
         // console.log("[updateBBGMCurrentRatingsUI] Called."); // Reduced logging
-        if (!currentBBGMPlayerJson || !currentBBGMPlayerJson.players || !currentBBGMPlayerJson.players[0].ratings) {
-            // console.log("[updateBBGMCurrentRatingsUI] No BBGM player JSON loaded. Resetting current ratings UI."); // Reduced logging
+        const elements = getAppElements('bbgm');
+
+        if (!currentBBGMPlayerJson || !currentBBGMPlayerJson.players || !currentBBGMPlayerJson.players[0].ratings || !currentBBGMSeasonRatings) {
+            // console.log("[updateBBGMCurrentRatingsUI] No BBGM player JSON or season ratings loaded. Resetting current ratings UI."); // Reduced logging
             // Reset UI if no player loaded
             appData.bbgm.upgradeCategories.forEach(category => {
-                const elements = getAppElements('bbgm');
-                const categoryElements = elements.getCategoryAttributeElements(category.key);
-                if (categoryElements.currentInput) categoryElements.currentInput.value = 0;
-                if (categoryElements.targetInput) categoryElements.targetInput.value = 0;
+                const categoryElements = elements.getUpgradeElements(category.key);
+                if (categoryElements.current) categoryElements.current.value = 0;
+                if (categoryElements.target) categoryElements.target.value = 0;
             });
+            updateBBGMPlayerInfoDisplay(); // Reset player name/OVR/POS/POT display
+            updateBBGMCurrentRatingsDisplayPanel(); // Reset current ratings panel
             return;
         }
         
+        updateBBGMPlayerInfoDisplay(); // Update player name and overall
         // Update each category's displayed current/target inputs based on their selected attribute
         appData.bbgm.upgradeCategories.forEach(category => {
             updateBBGMCurrentAndTargetInputs(category.key);
         });
+        updateBBGMCurrentRatingsDisplayPanel(); // Update the dedicated current ratings panel
         calculateAllUpgrades('bbgm'); // Recalculate costs with new current ratings
     }
     
@@ -1695,7 +2244,7 @@
         // detailedLog += `  3PT Made (${threePointersMade}) * ${conversion.threePointersMade} = ${threePtPoints}\n`; // Removed
 
         // Iterate over other relevant stats for conversion
-        const otherStats = ['ft', 'reb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pm', 'min', 'gp'];
+        const otherStats = ['ft', 'reb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pm', 'min']; // Removed 'gp' as it's handled separately
         otherStats.forEach(key => {
             if (conversion.hasOwnProperty(key)) {
                 const statValue = getStatValue(stats[key]);
@@ -1716,7 +2265,7 @@
             console.warn("[exportModifiedBBGMPlayer] Export failed: No player data loaded.");
             return;
         }
-        const playerName = currentBBGMPlayerJson.players[0].name || "BBGM_Player";
+        const playerName = currentBBGMPlayerJson.players[0].firstName + "_" + currentBBGMPlayerJson.players[0].lastName || "BBGM_Player";
         const blob = new Blob([JSON.stringify(currentBBGMPlayerJson, null, 2)], { type: "application/json" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -1729,24 +2278,68 @@
         console.log(`[exportModifiedBBGMPlayer] Modified player JSON exported as ${link.download}`);
     }
 
-    function showCurrentBBGMRatings() {
-        console.log("[showCurrentBBGMRatings] Called.");
-        if (!currentBBGMPlayerJson) {
-            showMessage("No BBGM player loaded.", 'info'); 
-            console.warn("[showCurrentBBGMRatings] Cannot show ratings: No player data loaded.");
+    // New function to update the dedicated current ratings display panel
+    function updateBBGMCurrentRatingsDisplayPanel() {
+        const elements = getAppElements('bbgm');
+        const displayPanel = elements.currentRatingsDisplay;
+        if (!displayPanel) {
+            console.error("BBGM current ratings display panel not found.");
             return;
         }
-        const ratings = currentBBGMPlayerJson.players[0].ratings;
-        let content = `<pre>--- ${currentBBGMPlayerJson.players[0].name || 'Player'}'s Ratings ---\n`;
-        // Sort ratings alphabetically for consistent display
-        const sortedRatings = Object.entries(ratings).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-        for (const [key, value] of sortedRatings) {
-            content += `${key.padEnd(5, ' ')}: ${value}\n`;
+
+        if (!currentBBGMPlayerJson || !currentBBGMPlayerJson.players || !currentBBGMPlayerJson.players[0].ratings || !currentBBGMSeasonRatings) {
+            displayPanel.innerHTML = '<p>No player loaded.</p>';
+            return;
         }
-        content += `-----------------------------------</pre>`;
-        showMessage(content, 'info');
-        console.log("[showCurrentBBGMRatings] Displayed current player ratings in UI.");
+
+        const player = currentBBGMPlayerJson.players[0];
+        const ratings = currentBBGMSeasonRatings; 
+
+        let content = '';
+        // Add OVR, POS, POT at the top
+        content += `<div style="font-weight: bold; margin-bottom: 10px;">`;
+        content += `<div style="display: flex; justify-content: space-between;"><span>Overall:</span> <span>${ratings.ovr || 'N/A'}</span></div>`;
+        content += `<div style="display: flex; justify-content: space-between;"><span>Position:</span> <span>${ratings.pos || 'N/A'}</span></div>`;
+        content += `<div style="display: flex; justify-content: space-between;"><span>Potential:</span> <span>${ratings.pot || 'N/A'}</span></div>`;
+        content += `</div>`;
+
+        // Ensure ratings is an object before proceeding
+        if (typeof ratings === 'object' && ratings !== null) {
+            // Group attributes by category
+            const categorizedRatings = {};
+            appData.bbgm.upgradeCategories.forEach(category => {
+                categorizedRatings[category.label] = [];
+                category.attributes.forEach(attrKey => {
+                    // Exclude ovr, pos, pot, fuzz, hgt from the main list
+                    // These are already displayed at the top, so exclude them from this detailed list
+                    if (ratings.hasOwnProperty(attrKey) && !['ovr', 'pos', 'pot', 'fuzz', 'hgt'].includes(attrKey)) {
+                        categorizedRatings[category.label].push({
+                            key: attrKey,
+                            value: ratings[attrKey],
+                            label: appData.bbgm.attributeLabels[attrKey] || attrKey.toUpperCase()
+                        });
+                    }
+                });
+                // Sort attributes within each category alphabetically by label
+                categorizedRatings[category.label].sort((a, b) => a.label.localeCompare(b.label));
+            });
+
+            // Render categorized ratings
+            for (const categoryLabel in categorizedRatings) {
+                if (categorizedRatings[categoryLabel].length > 0) {
+                    content += `<h4 style="color: var(--accent); margin-top: 15px; margin-bottom: 5px;">${categoryLabel}</h4>`;
+                    categorizedRatings[categoryLabel].forEach(item => {
+                        const displayValue = typeof item.value === 'object' && item.value !== null ? JSON.stringify(item.value) : item.value;
+                        content += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>${item.label}:</span> <span>${displayValue}</span></div>`;
+                    });
+                }
+            }
+        } else {
+            content += `<p>Error: Ratings data is not in expected format.</p><p>Raw: ${JSON.stringify(ratings)}</p>`;
+        }
+        displayPanel.innerHTML = content;
     }
+
 
     async function generateScoutingReport() {
         console.log("[generateScoutingReport] Called.");
@@ -1756,30 +2349,38 @@
             return;
         }
         const player = currentBBGMPlayerJson.players[0];
-        const playerName = player.name || "Unnamed Player";
+        const playerName = `${player.firstName || ''} ${player.lastName || ''}`.trim() || "Unnamed Player";
         const playerAge = player.age || "N/A";
-        const playerPos = player.pos || "N/A";
-        const playerOvr = player.ovr || "N/A";
+        
+        // Use currentBBGMSeasonRatings for the report
+        const currentRatings = currentBBGMSeasonRatings;
+        if (!currentRatings) {
+            showMessage("No ratings available for the selected season to generate a report.", 'info');
+            return;
+        }
+        const playerPos = currentRatings.pos || 'N/A';
+        const playerOvr = currentRatings.ovr || 'N/A';
+
 
         const prompt = `Generate a basketball scouting report for a player with the following attributes:
 Name: ${playerName}
 Age: ${playerAge}
 Overall Rating (OVR): ${playerOvr}
 Position: ${playerPos}
-Strength (stre): ${player.ratings.stre || 'N/A'}
-Speed (spd): ${player.ratings.spd || 'N/A'}
-Jumping (jmp): ${player.ratings.jmp || 'N/A'}
-Endurance (endu): ${player.ratings.endu || 'N/A'}
-Inside Scoring (ins): ${player.ratings.ins || 'N/A'}
-Dunking (dnk): ${player.ratings.dnk || 'N/A'}
-Free Throw (ft): ${player.ratings.ft || 'N/A'}
-Field Goal (fg): ${player.ratings.fg || 'N/A'}
-Three Point (tp): ${player.ratings.tp || 'N/A'}
-Offensive IQ (oiq): ${player.ratings.oiq || 'N/A'}
-Defensive IQ (diq): ${player.ratings.diq || 'N/A'}
-Dribbling (drb): ${player.ratings.drb || 'N/A'}
-Passing (pss): ${player.ratings.pss || 'N/A'}
-Rebounding (reb): ${player.ratings.reb || 'N/A'}
+Strength (stre): ${currentRatings.stre || 'N/A'}
+Speed (spd): ${currentRatings.spd || 'N/A'}
+Jumping (jmp): ${currentRatings.jmp || 'N/A'}
+Endurance (endu): ${currentRatings.endu || 'N/A'}
+Inside Scoring (ins): ${currentRatings.ins || 'N/A'}
+Dunking (dnk): ${currentRatings.dnk || 'N/A'}
+Free Throw (ft): ${currentRatings.ft || 'N/A'}
+Field Goal (fg): ${currentRatings.fg || 'N/A'}
+Three Point (tp): ${currentRatings.tp || 'N/A'}
+Offensive IQ (oiq): ${currentRatings.oiq || 'N/A'}
+Defensive IQ (diq): ${currentRatings.diq || 'N/A'}
+Dribbling (drb): ${currentRatings.drb || 'N/A'}
+Passing (pss): ${currentRatings.pss || 'N/A'}
+Rebounding (reb): ${currentRatings.reb || 'N/A'}
 
 The report should include:
 1.  **Strengths:** What are their key skills and what do they excel at?
@@ -1857,6 +2458,9 @@ Keep it concise, professional, and use basketball terminology. Do not include an
           console.warn("Tutorial checkbox #showTutorialOnStartup not found.");
       }
       
+      // Removed automatic setting of forceNewPlayerImport to true on startup.
+      // This is now handled within showApp('bbgm') based on whether a player is loaded.
+
       attachEventListeners();
       console.log("All event listeners attached.");
 
