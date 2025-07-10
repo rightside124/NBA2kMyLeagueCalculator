@@ -249,15 +249,15 @@
 
     /* Move slider thumb when checked */
     .switch input:checked + .slider:before { /* This selector is now effectively useless as input is hidden */
-      -webkit-transform: translateX(16px); /* Adjusted move toggle to the right */
-      -ms-transform: translateX(16px);
-      transform: translateX(16px);
+      -webkit-transform: translateX(12px); /* Adjusted move toggle to the right */
+      -ms-transform: translateX(12px);
+      transform: translateX(12px);
     }
     /* Corrected move slider thumb when checked */
     .checkbox-container input[type="checkbox"]:checked + .switch .slider:before {
-      -webkit-transform: translateX(16px); /* Adjusted move toggle to the right */
-      -ms-transform: translateX(16px);
-      transform: translateX(16px);
+      -webkit-transform: translateX(12px); /* Adjusted move toggle to the right */
+      -ms-transform: translateX(12px);
+      transform: translateX(12px);
     }
 
 
@@ -391,6 +391,12 @@
         border-color: var(--highlight); /* Highlight on focus */
         box-shadow: 0 0 5px var(--highlight);
     }
+    /* Specific style for read-only inputs */
+    .bbgm-attribute-group input[type="text"][readonly] {
+        background-color: var(--bg); /* Differentiate read-only visually */
+        border-color: var(--bg);
+        cursor: default;
+    }
 
     .bbgm-attribute-group label span { /* For Current/Target labels within the flex */
         /* Removed min-width to allow more flexible spacing */
@@ -399,6 +405,43 @@
         text-align: right;
         margin-top: 5px;
         font-size: 1em;
+    }
+
+    /* Styles for the consolidated Season Statistics Panel */
+    .season-stats-tabs {
+        display: flex;
+        margin-bottom: 10px;
+    }
+    .season-stats-tabs button {
+        flex: 1;
+        padding: 10px;
+        background-color: var(--bg);
+        color: var(--text);
+        border: 1px solid var(--accent);
+        border-radius: 5px 5px 0 0;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        margin: 0 2px; /* Small margin between buttons */
+    }
+    .season-stats-tabs button:first-child {
+        margin-left: 0;
+    }
+    .season-stats-tabs button:last-child {
+        margin-right: 0;
+    }
+    .season-stats-tabs button.active {
+        background-color: var(--accent);
+        color: black;
+        border-bottom-color: var(--accent); /* Keep border on active tab */
+    }
+    .season-stats-content {
+        border: 1px solid var(--bg);
+        border-top: none; /* Remove top border as tabs provide it */
+        padding: 10px;
+        border-radius: 0 0 8px 8px;
+        background-color: var(--bg);
+        min-height: 150px; /* Ensure some height even if no stats */
     }
   </style>
 </head>
@@ -525,12 +568,12 @@
       <div class="panel">
         <h2>Player Info & Season Stats</h2>
         <div class="result">Player Name: <span id="bbgm_playerNameDisplay">N/A</span></div>
+        <div class="result">Age: <span id="bbgm_playerAgeDisplay">N/A</span></div>
         <div class="result">Position: <span id="bbgm_playerPosDisplay">N/A</span></div>
         <div class="result">Overall Rating: <span id="bbgm_playerOvrDisplay">N/A</span></div>
         <div class="result">Potential: <span id="bbgm_playerPotDisplay">N/A</span></div>
         <label>Select Season for Points:
             <select id="bbgm_seasonSelect" data-previous-season="">
-                <option value="">- No Player Imported -</option>
             </select>
         </label>
         <div class="result">Points from Season: <span id="bbgm_seasonPointsEarned">0</span></div>
@@ -539,10 +582,24 @@
 
       <div class="panel">
         <h2>Bonus Multipliers</h2>
-        <label>Regular Season Wins: <select id="bbgm_winsCategory"><option value="">- Select Here -</option><option value="1">0-20 Wins (1×)</option><option value="1.25">21-40 Wins (1.25×)</option><option value="1.5">41-50 Wins (1.5×)</option><option value="1.75">51-60 Wins (1.75×)</option><option value="2">61+ Wins (2×)</option></select></label>
-        <label>Playoff Performance: <select id="bbgm_playoffPerformance"><option value="">- Select Here -</option><option value="1">No Playoffs (1×)</option><option value="1.5">Play-in (1.5×)</option><option value="1">Play-in Exit (1×)</option><option value="1.15">1st Round Exit (1.15×)</option><option value="1.35">2nd Round Exit (1.35×)</option><option value="1.55">Conf. Finals Exit (1.55×)</option><option value="1.75">Finals Exit (1.75×)</option><option value="2">Champions (2×)</option></select></label>
+        <label>Regular Season Wins: <select id="bbgm_winsCategory">
+            <option value="1">0-20 Wins (1.0×)</option>
+            <option value="1.25">21-40 Wins (1.1375×)</option>
+            <option value="1.5">41-50 Wins (1.275×)</option>
+            <option value="1.75">51-60 Wins (1.4125×)</option>
+            <option value="2">61+ Wins (1.55×)</option>
+        </select></label>
+        <label>Playoff Performance: <select id="bbgm_playoffPerformance">
+            <option value="1">No Playoffs (1.0×)</option>
+            <option value="1.05">Play-in (1.05×)</option>
+            <option value="1.15">1st Round Exit (1.0825×)</option>
+            <option value="1.35">2nd Round Exit (1.1925×)</option>
+            <option value="1.55">Conf. Finals Exit (1.3025×)</option>
+            <option value="1.75">Finals Exit (1.4125×)</option>
+            <option value="2">Champions (1.55×)</option>
+        </select></label>
         <button id="bbgm_toggleMultiplierInfoBtn">ℹ️ Explanation</button>
-        <div id="bbgm_multiplierInfo" style="display:none; margin-top:10px;"><p><strong>Wins:</strong> 0-20(1×), 21-40(1.25×), 41-50(1.5×), 51-60(1.75×), 61+(2×)</p><p><strong>Playoffs:</strong> No Playoffs(1×), Play-in(1.5×), 1stR Exit(1.15×), 2ndR Exit(1.35×), ConfF Exit(1.55×), Finals Exit(1.75×), Champs(2×)</p></div>
+        <div id="bbgm_multiplierInfo" style="display:none; margin-top:10px;"><p><strong>Wins:</strong> 0-20(1.0×), 21-40(1.1375×), 41-50(1.275×), 51-60(1.4125×), 61+(1.55×)</p><p><strong>Playoffs:</strong> No Playoffs(1.0×), Play-in(1.05×), 1stR Exit(1.0825×), 2ndR Exit(1.1925×), ConfF Exit(1.3025×), Finals Exit(1.4125×), Champs(1.55×)</p></div>
       </div>
 
       <div class="panel">
@@ -585,19 +642,19 @@
                     <!-- Offensive attributes populated here -->
                 </select>
             </label>
-            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentOffensiveAttribute" value="0" readonly></label>
+            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentOffensiveAttribute" value="0"></label>
             <label><span>Target:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_targetOffensiveAttribute" value="0" min="0" max="100"></label>
             <div class="result">Category Cost: <span id="bbgm_offenseCost">0</span></div>
         </div>
         <!-- Athleticism Category -->
         <div id="bbgm_athleticAttributes" class="bbgm-attribute-group">
-            <h3><label class="checkbox-container"><input type="checkbox" id="bbgm_useAthletic" checked><span class="switch"><span class="slider"></span></span>Athleticism Attributes</label></h3>
+            <h3><label class="checkbox-container"><input type="checkbox" id="bbgm_useAthletic" checked><span class="switch"><span class="slider"></span></span>Athleticism</label></h3>
             <label>Select Attribute:
                 <select id="bbgm_athleticAttributeSelect">
                     <!-- Athleticism attributes populated here -->
                 </select>
             </label>
-            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentAthleticAttribute" value="0" readonly></label>
+            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentAthleticAttribute" value="0"></label>
             <label><span>Target:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_targetAthleticAttribute" value="0" min="0" max="100"></label>
             <div class="result">Category Cost: <span id="bbgm_athleticCost">0</span></div>
         </div>
@@ -609,7 +666,7 @@
                     <!-- Skill attributes populated here -->
                 </select>
             </label>
-            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentSkillAttribute" value="0" readonly></label>
+            <label><span>Current:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_currentSkillAttribute" value="0"></label>
             <label><span>Target:</span> <input type="text" pattern="[0-9]*" inputmode="numeric" id="bbgm_targetSkillAttribute" value="0" min="0" max="100"></label>
             <div class="result">Category Cost: <span id="bbgm_skillCost">0</span></div>
         </div>
@@ -617,10 +674,23 @@
         <div class="result" id="bbgm_upgradeSummary"></div>
         <button id="bbgm_confirmUpgradeBtn" class="success">Confirm Upgrade</button>
       </div>
+      <!-- New Season Statistics Panel -->
+      <div class="panel" id="bbgm_seasonStatsPanel">
+        <h2>Season Statistics</h2>
+        <div class="season-stats-tabs">
+            <button id="bbgm_showRegularSeasonStatsBtn" class="active">Regular Season</button>
+            <button id="bbgm_showPlayoffStatsBtn">Playoffs</button>
+        </div>
+        <div class="season-stats-content" id="bbgm_statsContentDisplay">
+            <!-- Stats will be dynamically loaded here -->
+            <p>Select a season and type of stats to display.</p>
+        </div>
+      </div>
     </div>
     <div class="bottom-bar">
         <!-- The old "Show Current Ratings (Popup)" button has been removed -->
         <button id="bbgm_generateReportBtn">✨ Generate Scouting Report</button>
+        <button id="bbgm_generateRandomPlayerBtn">✨ Generate Random Player</button>
     </div>
   </div>
 
@@ -697,6 +767,8 @@
     const VALUABLE_MULTIPLIER = 1.5; // Multiplier for valuable BBGM attributes (3pt, OIQ, DIQ)
     const PLAYOFF_POINTS_MULTIPLIER = 1.15; // Multiplier for playoff stats points
     const POINTS_PER_GP = 100; // Points for each game played
+    const GLOBAL_MULTIPLIER_NERF = 0.55; // Nerf all bonus multipliers by 45% (1 - 0.45)
+    const PRICING_NERF = 0.75; // Nerf all upgrade pricing by 25% (1 - 0.25)
 
     // Global variable to store the imported BBGM player JSON
     let currentBBGMPlayerJson = null;
@@ -704,6 +776,7 @@
     let bbgmAttributeTargets = {}; // Stores target ratings for all BBGM attributes
     let currentBBGMSeasonRatings = null; // Stores the ratings object for the currently selected season
     let bbgmMultiplierWarningShown = false; // Flag to track if multiplier warning has been shown for BBGM
+    let currentStatsView = 'regularSeason'; // 'regularSeason' or 'playoffs'
 
     // Default template player for BBGM if no file is imported
     const defaultBBGMPlayer = {
@@ -720,7 +793,8 @@
                 stre: 50, spd: 60, jmp: 65, endu: 70, // Athleticism
                 ins: 60, dnk: 55, ft: 70, fg: 60, tp: 60, // Offensive
                 oiq: 65, diq: 65, drb: 70, pss: 70, reb: 50, // Skill
-                ovr: 65, pos: "PG", pot: 75 // Added to ratings for consistency, though main player object is source
+                ovr: 65, pos: "PG", pot: 75, // Added to ratings for consistency, though main player object is source
+                hgt: 75, // Default height
             }],
             stats: [ // Basic stats for one season for point conversion
                 {
@@ -732,6 +806,23 @@
         }]
     };
 
+    // Helper to get the correct cost based on tier and multipliers
+    const getAdjustedCost = (r, isValuable = false) => {
+        let baseCost;
+        if (r < 40) baseCost = 400;
+        else if (r < 50) baseCost = 1050;
+        else if (r < 60) baseCost = 2250;
+        else if (r < 70) baseCost = 4950;
+        else if (r < 80) baseCost = 9850;
+        else if (r < 90) baseCost = 18950;
+        else baseCost = 35155;
+
+        let adjustedCost = baseCost / PRICING_NERF;
+        if (isValuable) {
+            adjustedCost = adjustedCost / VALUABLE_MULTIPLIER;
+        }
+        return adjustedCost;
+    };
 
     // Define point values and upgrade costs for both apps
     const appData = {
@@ -772,20 +863,21 @@
             // gp is handled separately for POINTS_PER_GP
         },
         upgradeCostPerAttribute: {
-            stre: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
-            spd: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
-            jmp: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
-            endu: r => (r < 60 ? 64 : r <= 79 ? 65 : r <= 89 ? 147 : r <= 94 ? 217 : 274),
-            ins: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
-            dnk: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
-            ft: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
-            fg: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209),
-            tp: r => (r < 60 ? 95 : r <= 79 ? 115 : r <= 89 ? 134 : r <= 94 ? 168 : 209) * VALUABLE_MULTIPLIER, // Multiplier applied
-            oiq: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347) * VALUABLE_MULTIPLIER, // Multiplier applied
-            diq: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347) * VALUABLE_MULTIPLIER, // Multiplier applied
-            drb: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
-            pss: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
-            reb: r => (r < 60 ? 75 : r <= 79 ? 120 : r <= 89 ? 157 : r <= 94 ? 234 : 347),
+            stre: r => getAdjustedCost(r, false),
+            spd: r => getAdjustedCost(r, false),
+            jmp: r => getAdjustedCost(r, false),
+            endu: r => getAdjustedCost(r, false),
+
+            ins: r => getAdjustedCost(r, false),
+            dnk: r => getAdjustedCost(r, false),
+            ft: r => getAdjustedCost(r, false),
+            fg: r => getAdjustedCost(r, false),
+            tp: r => getAdjustedCost(r, true), // Valuable
+            oiq: r => getAdjustedCost(r, true), // Valuable
+            diq: r => getAdjustedCost(r, true), // Valuable
+            drb: r => getAdjustedCost(r, false),
+            pss: r => getAdjustedCost(r, false),
+            reb: r => getAdjustedCost(r, false),
         },
         upgradeCategories: [
           { key: 'offensive', label: 'Offensive', attributes: ['ins', 'dnk', 'ft', 'fg', 'tp'], useId: 'useOffensive' },
@@ -799,6 +891,21 @@
             oiq: 'Offensive IQ', diq: 'Defensive IQ', drb: 'Dribbling', pss: 'Passing', reb: 'Rebounding'
         }
       }
+    };
+
+    // Award points for BBGM
+    const AWARD_POINTS = {
+        "Most Valuable Player": 50000,
+        "Defensive Player of the Year": 30000,
+        "Sixth Man of the Year": 15000,
+        "Rookie of the Year": 15000,
+        "All-League First Team": 20000,
+        "All-League Second Team": 15000,
+        "All-League Third Team": 10000,
+        "All-Defensive First Team": 12000,
+        "All-Defensive Second Team": 8000,
+        "All-Rookie First Team": 10000,
+        "All-Rookie Second Team": 5000
     };
 
     // --- DOM ELEMENT SELECTOR HELPER ---
@@ -840,6 +947,7 @@
         elements.forceNewPlayerImport = document.getElementById(`${prefix}forceNewPlayerImport`); // New checkbox
         elements.quickSelectAttribute = document.getElementById(`${prefix}quickSelectAttribute`); // New dropdown
         elements.playerNameDisplay = document.getElementById(`${prefix}playerNameDisplay`); // New
+        elements.playerAgeDisplay = document.getElementById(`${prefix}playerAgeDisplay`); // New: Player Age
         elements.playerPosDisplay = document.getElementById(`${prefix}playerPosDisplay`); // New
         elements.playerOvrDisplay = document.getElementById(`${prefix}playerOvrDisplay`); // New
         elements.playerPotDisplay = document.getElementById(`${prefix}playerPotDisplay`); // New
@@ -847,6 +955,11 @@
         elements.seasonPointsEarned = document.getElementById(`${prefix}seasonPointsEarned`); // New
         elements.addSeasonPointsToBankBtn = document.getElementById(`${prefix}addSeasonPointsToBankBtn`); // New
         elements.currentRatingsDisplay = document.getElementById(`${prefix}currentRatingsDisplay`); // New
+        
+        // Consolidated Season Stats Panel elements
+        elements.statsContentDisplay = document.getElementById(`${prefix}statsContentDisplay`);
+        elements.showRegularSeasonStatsBtn = document.getElementById(`${prefix}showRegularSeasonStatsBtn`);
+        elements.showPlayoffStatsBtn = document.getElementById(`${prefix}showPlayoffStatsBtn`);
         
         // BBGM category-specific attribute selectors and current/target inputs
         elements.getUpgradeElements = (categoryKey) => { // Renamed from getCategoryAttributeElements to be consistent
@@ -922,6 +1035,7 @@
             data.currentBBGMPlayerId = currentBBGMPlayerId; // Save the current player ID
             data.bbgmAttributeTargets = bbgmAttributeTargets; // Save the global target object
             data.selectedSeason = elements.seasonSelect?.value || ''; // Save selected season
+            data.currentStatsView = currentStatsView; // Save current stats view (regular/playoffs)
 
             // Save the 'use' state for BBGM categories
             appData[appId].upgradeCategories.forEach(category => {
@@ -973,25 +1087,9 @@
             currentBBGMPlayerJson = data.currentBBGMPlayerJson || null;
             currentBBGMPlayerId = data.currentBBGMPlayerId || ""; // Load player ID, default to blank
             bbgmAttributeTargets = data.bbgmAttributeTargets || {}; // Load the global target object
+            currentStatsView = data.currentStatsView || 'regularSeason'; // Load current stats view
             // console.log(`[loadDataIntoApp] BBGM Player JSON loaded:`, currentBBGMPlayerJson ? currentBBGMPlayerJson.players[0].name : 'None'); // Reduced logging
             // console.log(`[loadDataIntoApp] BBGM Attribute Targets loaded:`, bbgmAttributeTargets); // Reduced logging
-
-            // Load the 'use' state for BBGM categories
-            if (data.upgrade) {
-                appData[targetAppId].upgradeCategories.forEach(category => {
-                    const upgradeElements = elements.getUpgradeElements(category.key);
-                    const loadedCat = data.upgrade[category.key];
-                    if (loadedCat) {
-                        if (upgradeElements.use) {
-                            upgradeElements.use.checked = loadedCat.use;
-                            // Also disable/enable target input based on loaded 'use' state
-                            if (upgradeElements.target) {
-                                upgradeElements.target.disabled = !loadedCat.use;
-                            }
-                        }
-                    }
-                });
-            }
 
             // Update player name and overall display
             updateBBGMPlayerInfoDisplay();
@@ -1013,6 +1111,7 @@
             updateBBGMCurrentRatingsUI(); // This will also update the displayed current/target inputs based on selected attributes
             populateBBGMSeasonSelect(data.selectedSeason); // Pass selected season to re-select it
             calculatePointsFromSelectedSeason(); // Recalculate points for the re-selected season
+            updateBBGMSeasonStatsPanel(); // Update the new season stats panel
         }
 
         if (elements.statsForm && data.stats) {
@@ -1168,12 +1267,15 @@
         finalMultiplier = gameResultMultiplier * opp * team;
         detailedLog += `NBA2K Multipliers: Game Result=${gameResultMultiplier}, Opponent=${opp}, Team=${team}\n`;
       } else if (appId === 'bbgm') {
-        const winsCategory = elements.winsCategory?.value || '';
-        const playoffPerformance = elements.playoffPerformance?.value || '';
-        const winsMult = parseFloat(winsCategory) || 1;
-        const playoffMult = parseFloat(playoffPerformance) || 1;
-        finalMultiplier = winsMult * playoffMult;
-        detailedLog += `BBGM Multipliers: Wins=${winsMult}, Playoff=${playoffMult}\n`;
+        const winsCategory = elements.winsCategory?.value || '1'; // Default to 1 if not selected
+        const playoffPerformance = elements.playoffPerformance?.value || '1'; // Default to 1 if not selected
+        
+        // Calculate the effective multiplier for each category, ensuring it's >= 1
+        const winsMult = 1 + (parseFloat(winsCategory) - 1) * GLOBAL_MULTIPLIER_NERF;
+        const playoffMult = 1 + (parseFloat(playoffPerformance) - 1) * GLOBAL_MULTIPLIER_NERF;
+
+        finalMultiplier = winsMult * playoffMult; // Multiply the adjusted multipliers
+        detailedLog += `BBGM Multipliers: Wins=${winsMult.toFixed(4)}, Playoff=${playoffMult.toFixed(4)}\n`;
       }
 
       let total = Math.round(earnedFromStats * finalMultiplier); // Apply multiplier first
@@ -1270,37 +1372,49 @@
             // console.log(`[calculateAllUpgrades] ${category.key} total cost: ${Math.round(categoryTotalCost)}`); // Reduced logging
           }
       } else if (appId === 'bbgm') {
-            if (!currentBBGMPlayerJson || !currentBBGMSeasonRatings) {
-                if (elements.upgradeSummary) elements.upgradeSummary.innerHTML = "Load a player to calculate upgrade costs.";
-                console.warn(`[calculateAllUpgrades] BBGM - No player or season ratings loaded.`);
+            // If no player is loaded, use the manually set current values from bbgmAttributeTargets
+            const playerRatingsSource = currentBBGMPlayerJson && currentBBGMSeasonRatings ? currentBBGMSeasonRatings : bbgmAttributeTargets;
+
+            if (!playerRatingsSource || Object.keys(playerRatingsSource).length === 0) {
+                if (elements.upgradeSummary) elements.upgradeSummary.innerHTML = "Set attributes or load a player to calculate upgrade costs.";
+                // Reset all category costs to 0 if no player or attributes loaded
+                appData.bbgm.upgradeCategories.forEach(category => {
+                    const categoryElements = elements.getUpgradeElements(category.key);
+                    if (categoryElements.costDisplay) categoryElements.costDisplay.innerText = "0";
+                });
+                console.warn(`[calculateAllUpgrades] BBGM - No player or attributes loaded/set.`);
                 return;
             }
-            const playerRatings = currentBBGMSeasonRatings; // Use the ratings for the currently selected season
             
             for (let category of appSpecificData.upgradeCategories) {
                 const categoryElements = elements.getUpgradeElements(category.key);
                 const useCategory = categoryElements.use ? categoryElements.use.checked : false; // Get state of checkbox
+
+                let categoryTotalCost = 0; // Initialize for each category
 
                 if (!useCategory) { // If category is not checked, its cost is 0
                     if (categoryElements.costDisplay) categoryElements.costDisplay.innerText = "Ignored";
                     continue; // Skip calculation for this category
                 }
 
-                let categoryTotalCost = 0;
-
                 for (const attrKey of category.attributes) {
-                    const currentAttrRating = playerRatings[attrKey] || 0;
+                    // Use the current rating from the player JSON if loaded, otherwise from bbgmAttributeTargets
+                    const currentAttrRating = currentBBGMPlayerJson && currentBBGMSeasonRatings ? 
+                                              (currentBBGMSeasonRatings[attrKey] || 0) : 
+                                              (parseInt(bbgmAttributeTargets[attrKey]) || 0);
+                    
                     const targetAttrRating = parseInt(bbgmAttributeTargets[attrKey] || currentAttrRating); // Use stored target or current
 
                     // console.log(`[calculateAllUpgrades] BBGM -   Attribute ${attrKey}: Current: ${currentAttrRating}, Target: ${targetAttrRating}`); // Reduced logging
                     if (currentAttrRating >= targetAttrRating) {
+                        // If target is less than or equal to current, this attribute doesn't contribute to cost
                         // console.log(`[calculateAllUpgrades] BBGM -   ${attrKey} already at or above target (${currentAttrRating} >= ${targetAttrRating}).`); // Reduced logging
                         continue;
                     }
                     const costFunction = appSpecificData.upgradeCostPerAttribute[attrKey];
                     if (typeof costFunction !== 'function') {
                         console.error(`[calculateAllUpgrades] BBGM - Cost function for attribute ${attrKey} is not defined.`);
-                        if (categoryElements.costDisplay) categoryElements.costDisplay.innerText = "Error";
+                        if (categoryElements.costDisplay) categoryElements.costDisplay.innerText = "Error"; // This will set it for the category
                         categoryTotalCost = NaN; // Indicate error for the category
                         break;
                     }
@@ -1387,6 +1501,18 @@
               console.error(`[confirmUpgrade] Could not find ratings entry for season ${selectedSeason} to apply upgrades.`);
               showMessage("Error: Could not apply upgrades to the selected season's ratings.", 'danger');
           }
+      } else if (appId === 'bbgm' && !currentBBGMPlayerJson) {
+          // If no player is loaded, but user confirmed upgrade, just deduct points and reset targets
+          // This assumes they were just testing costs or doing a manual simulation
+          showMessage("Upgrade successful! Points deducted. (No player imported, so no ratings updated).", 'success');
+          // Reset bbgmAttributeTargets to 0 for all attributes after "confirm" if no player is loaded
+          for (const attrKey in bbgmAttributeTargets) {
+              bbgmAttributeTargets[attrKey] = 0;
+          }
+          // Update UI to reflect reset
+          appData.bbgm.upgradeCategories.forEach(category => {
+              updateBBGMCurrentAndTargetInputs(category.key);
+          });
       } else {
           showMessage("Upgrade successful!", 'success');
       }
@@ -1514,6 +1640,7 @@
                 document.getElementById('bbgm_exportModifiedPlayerBtn').addEventListener('click', exportModifiedBBGMPlayer);
                 // Removed event listener for bbgm_showRatingsBtn as it's no longer a popup
                 document.getElementById('bbgm_generateReportBtn').addEventListener('click', generateScoutingReport);
+                document.getElementById('bbgm_generateRandomPlayerBtn').addEventListener('click', generateRandomBBGMPlayer); // New button for random player
 
                 // BBGM Quick Select Attribute dropdown
                 if (elements.quickSelectAttribute) {
@@ -1556,6 +1683,18 @@
                 if (elements.seasonSelect) elements.seasonSelect.addEventListener('change', calculatePointsFromSelectedSeason);
                 if (elements.addSeasonPointsToBankBtn) elements.addSeasonPointsToBankBtn.addEventListener('click', addSeasonPointsToBank);
 
+                // Season Stats Tabs
+                if (elements.showRegularSeasonStatsBtn) elements.showRegularSeasonStatsBtn.addEventListener('click', () => {
+                    currentStatsView = 'regularSeason';
+                    updateBBGMSeasonStatsPanel();
+                    saveCurrentAppData('bbgm');
+                });
+                if (elements.showPlayoffStatsBtn) elements.showPlayoffStatsBtn.addEventListener('click', () => {
+                    currentStatsView = 'playoffs';
+                    updateBBGMSeasonStatsPanel();
+                    saveCurrentAppData('bbgm');
+                });
+
 
                 if (elements.winsCategory) elements.winsCategory.addEventListener('change', () => {
                     // console.log(`[bbgm_winsCategory] Changed to ${elements.winsCategory.value}. Recalculating points.`); // Reduced logging
@@ -1579,8 +1718,13 @@
                                 if (!categoryElements.use.checked) {
                                     // If category is excluded, reset its target to current for calculation purposes
                                     const selectedAttr = categoryElements.select.value;
-                                    if (selectedAttr && currentBBGMSeasonRatings) {
-                                        bbgmAttributeTargets[selectedAttr] = currentBBGMSeasonRatings[selectedAttr] || 0;
+                                    if (selectedAttr && currentBBGMPlayerJson) { // Only reset if a player is loaded
+                                        // If no player is loaded, let the user manually control 'current'
+                                        if (currentBBGMSeasonRatings && currentBBGMSeasonRatings[selectedAttr] !== undefined) {
+                                            bbgmAttributeTargets[selectedAttr] = currentBBGMSeasonRatings[selectedAttr];
+                                        } else {
+                                            bbgmAttributeTargets[selectedAttr] = 0; // Default to 0 if no player and not previously set
+                                        }
                                         updateBBGMCurrentAndTargetInputs(category.key); // Refresh inputs
                                     }
                                 }
@@ -1595,7 +1739,8 @@
                         });
                     }
                     if (categoryElements.target) {
-                        categoryElements.target.addEventListener('input', () => {
+                        // Use 'blur' and 'keydown' for Enter key to trigger validation
+                        categoryElements.target.addEventListener('blur', () => {
                             const selectedAttr = categoryElements.select.value;
                             if (selectedAttr) {
                                 const currentVal = parseInt(categoryElements.current.value) || 0;
@@ -1611,11 +1756,45 @@
                                 // Validation for target < current
                                 if (targetVal < currentVal) {
                                     showMessage(`Target rating (${targetVal}) cannot be less than current rating (${currentVal}).`, 'warning');
-                                    // Do NOT force target to current. Allow user to type, but warn.
+                                    // Do NOT revert, allow user to keep the value, but warn
                                 }
 
                                 bbgmAttributeTargets[selectedAttr] = targetVal;
                                 calculateAllUpgrades('bbgm');
+                            }
+                        });
+                        categoryElements.target.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter') {
+                                categoryElements.target.blur(); // Trigger blur event to run validation
+                            }
+                        });
+                    }
+                    // Listener for current attribute input (only if no player is loaded)
+                    if (categoryElements.current) {
+                        categoryElements.current.addEventListener('input', () => {
+                            if (!currentBBGMPlayerJson) { // Only allow manual input if no player is loaded
+                                const selectedAttr = categoryElements.select.value;
+                                if (selectedAttr) {
+                                    let currentVal = parseInt(categoryElements.current.value) || 0;
+                                    if (currentVal < 0) {
+                                        currentVal = 0;
+                                        categoryElements.current.value = 0;
+                                        showMessage("Current rating cannot be less than 0.", 'warning');
+                                    }
+                                    if (currentVal > 100) {
+                                        currentVal = 100;
+                                        categoryElements.current.value = 100;
+                                        showMessage("Current rating cannot exceed 100.", 'warning');
+                                    }
+                                    bbgmAttributeTargets[selectedAttr] = currentVal; // Store the manually set "current" as a target
+                                    // Also update the target to be at least the current value
+                                    let targetVal = parseInt(categoryElements.target.value) || 0;
+                                    if (targetVal < currentVal) {
+                                        categoryElements.target.value = currentVal;
+                                        bbgmAttributeTargets[selectedAttr] = currentVal; // Update target in bbgmAttributeTargets
+                                    }
+                                    calculateAllUpgrades('bbgm');
+                                }
                             }
                         });
                     }
@@ -1709,6 +1888,7 @@
               updateBBGMCurrentRatingsUI(); // Ensure BBGM current ratings are updated on app switch
               calculateAllUpgrades('bbgm'); // Calculate initial cost for selected attribute
               calculatePointsFromSelectedSeason(); // Calculate points from selected season
+              updateBBGMSeasonStatsPanel(); // Update the new season stats panel
 
               // Force New Player Import checkbox behavior on app load
               const forceNewPlayerImportCheckbox = elements.forceNewPlayerImport;
@@ -1833,11 +2013,13 @@
             const currentSeasonRatings = getRatingsForSeason(selectedSeason);
 
             elements.playerNameDisplay.innerText = `${player.firstName || ''} ${player.lastName || ''}`.trim() || 'N/A';
+            elements.playerAgeDisplay.innerText = player.age || 'N/A'; // Display age
             elements.playerPosDisplay.innerText = currentSeasonRatings?.pos || player.pos || 'N/A';
             elements.playerOvrDisplay.innerText = currentSeasonRatings?.ovr || player.ovr || 'N/A';
             elements.playerPotDisplay.innerText = currentSeasonRatings?.pot || player.pot || 'N/A';
         } else {
             elements.playerNameDisplay.innerText = 'N/A';
+            elements.playerAgeDisplay.innerText = 'N/A';
             elements.playerPosDisplay.innerText = 'N/A';
             elements.playerOvrDisplay.innerText = 'N/A';
             elements.playerPotDisplay.innerText = 'N/A';
@@ -1878,14 +2060,25 @@
         const categoryElements = elements.getUpgradeElements(categoryKey);
         
         const selectedAttr = categoryElements.select.value;
-        if (!selectedAttr || !currentBBGMPlayerJson || !currentBBGMSeasonRatings) {
+        if (!selectedAttr) {
             categoryElements.current.value = 0;
             categoryElements.target.value = 0;
+            categoryElements.current.readOnly = false; // Always editable if no attribute selected
+            categoryElements.current.style.backgroundColor = ''; // Reset background
             return;
         }
 
-        const playerRatings = currentBBGMSeasonRatings; // Use the currently selected season's ratings
-        const currentRating = playerRatings[selectedAttr] !== undefined ? playerRatings[selectedAttr] : 0;
+        let currentRating;
+        if (currentBBGMPlayerJson && currentBBGMSeasonRatings) {
+            currentRating = currentBBGMSeasonRatings[selectedAttr] !== undefined ? currentBBGMSeasonRatings[selectedAttr] : 0;
+            categoryElements.current.readOnly = true; // Read-only if player is loaded
+            categoryElements.current.style.backgroundColor = 'var(--bg)'; // Visually differentiate read-only
+        } else {
+            // If no player is loaded, allow manual input for "Current"
+            currentRating = parseInt(categoryElements.current.value) || 0; // Use current value from input
+            categoryElements.current.readOnly = false; // Editable if no player
+            categoryElements.current.style.backgroundColor = ''; // Reset background
+        }
         
         // Use the stored target rating, or default to current if not set
         let targetRating = bbgmAttributeTargets[selectedAttr] !== undefined ? bbgmAttributeTargets[selectedAttr] : currentRating;
@@ -1954,18 +2147,18 @@
                     return;
                 }
 
-                const incomingPlayerId = importedJson.players[0].pid || `${importedJson.players[0].firstName}_${importedJson.players[0].lastName}_${importedJson.players[0].age}_${importedJson.players[0].pos}`;
+                const incomingPlayerId = importedJson.players[0].pid || `${importedJson.players[0].firstName || ''}_${importedJson.players[0].lastName || ''}_${importedJson.players[0].age || ''}_${importedJson.players[0].pos || ''}`;
                 const elements = getAppElements('bbgm');
                 const forceNewPlayerImportCheckbox = elements.forceNewPlayerImport;
 
                 // Check if a player is already loaded AND the IDs mismatch AND force checkbox is NOT checked
                 if (currentBBGMPlayerId !== "" && currentBBGMPlayerId !== incomingPlayerId) {
                     if (!forceNewPlayerImportCheckbox.checked) {
-                        showMessage(`Player ID mismatch! Currently loaded: ${currentBBGMPlayerJson?.players[0]?.firstName || ''} ${currentBBGMPlayerJson?.players[0]?.lastName || ''} (ID: ${currentBBGMPlayerId}). Imported: ${importedJson.players[0].firstName} ${importedJson.players[0].lastName} (ID: ${incomingPlayerId}). Check 'Force New Player Import' to continue.`, 'danger');
+                        showMessage(`Player ID mismatch! Currently loaded: ${currentBBGMPlayerJson?.players[0]?.firstName || ''} ${currentBBGMPlayerJson?.players[0].lastName || ''} (ID: ${currentBBGMPlayerId}). Imported: ${importedJson.players[0].firstName} ${importedJson.players[0].lastName} (ID: ${incomingPlayerId}). Check 'Force New Player Import' to continue.`, 'danger');
                         event.target.value = ''; // Clear file input
                         return;
                     } else {
-                        showMessage(`Warning: Importing a new player (${importedJson.players[0].firstName} ${importedJson.players[0].lastName}) and overwriting current player.`, 'warning');
+                        showMessage(`Warning: Importing a new player (${importedJson.players[0].firstName || ''} ${importedJson.players[0].lastName || ''}) and overwriting current player.`, 'warning');
                     }
                 }
                 
@@ -1989,6 +2182,22 @@
                 // console.log("[handleBBGMPlayerFile] bbgmAttributeTargets initialized with latest player ratings:", bbgmAttributeTargets); // Reduced logging
 
                 updateBBGMPlayerInfoDisplay(); // Update player name, OVR, POS, POT display based on selected season
+                
+                // Calculate and add points from awards (DO NOT ADD TO BANK AUTOMATICALLY)
+                let awardsPoints = 0;
+                if (currentBBGMPlayerJson.players[0].awards && Array.isArray(currentBBGMPlayerJson.players[0].awards)) {
+                    currentBBGMPlayerJson.players[0].awards.forEach(award => {
+                        if (AWARD_POINTS[award.name]) {
+                            awardsPoints += AWARD_POINTS[award.name];
+                            console.log(`[handleBBGMPlayerFile] Award "${award.name}" found, adding ${AWARD_POINTS[award.name]} points.`);
+                        }
+                    });
+                }
+                if (awardsPoints > 0) {
+                    // Do NOT add to bank here. User will add manually from season points.
+                    showMessage(`${awardsPoints} points were earned from career awards (not yet added to bank).`, 'info');
+                }
+
                 calculatePointsFromSelectedSeason(); // Calculate points for the initially selected (latest) season
                 
                 // The points are now added via the "Add Season Points to Bank" button, not automatically here.
@@ -1997,6 +2206,7 @@
                 updateBBGMCurrentRatingsUI(); // Always update UI after player import attempt
                 calculateAllUpgrades('bbgm'); // Calculate cost for the newly loaded player's selected attribute
                 saveCurrentAppData('bbgm'); // Save the updated player JSON and points
+                updateBBGMSeasonStatsPanel(); // Update the new season stats panel
 
                 // Turn off "Force New Player Import" after successful import
                 elements.forceNewPlayerImport.checked = false;
@@ -2011,11 +2221,13 @@
                 // Reset player name and overall display on error
                 const elements = getAppElements('bbgm');
                 if (elements.playerNameDisplay) elements.playerNameDisplay.innerText = 'N/A';
+                if (elements.playerAgeDisplay) elements.playerAgeDisplay.innerText = 'N/A';
                 if (elements.playerPosDisplay) elements.playerPosDisplay.innerText = 'N/A';
                 if (elements.playerOvrDisplay) elements.playerOvrDisplay.innerText = 'N/A';
                 if (elements.playerPotDisplay) elements.playerPotDisplay.innerText = 'N/A';
                 if (elements.seasonSelect) elements.seasonSelect.innerHTML = '<option value="">- No Player Imported -</option>'; // Clear season select
                 if (elements.seasonPointsEarned) elements.seasonPointsEarned.innerText = '0'; // Reset season points
+                updateBBGMSeasonStatsPanel(); // Reset the season stats panel
             }
         };
         reader.onerror = (e) => {
@@ -2076,6 +2288,24 @@
         seasonSelect.dataset.previousSeason = seasonSelect.value;
     }
 
+    // Function to get age nerf multiplier
+    function getAgeNerfMultiplier(age) {
+        if (age < 30) return 1.0;
+        if (age >= 30 && age <= 32) return 0.9;
+        if (age >= 33 && age <= 35) return 0.8;
+        if (age >= 36) return 0.7; // More aggressive nerf for older players
+        return 1.0;
+    }
+
+    // Function to get OVR nerf multiplier
+    function getOvrNerfMultiplier(ovr) {
+        if (ovr < 70) return 1.0;
+        if (ovr >= 70 && ovr <= 79) return 0.9;
+        if (ovr >= 80 && ovr <= 89) return 0.8;
+        if (ovr >= 90) return 0.7; // More aggressive nerf for high OVR players
+        return 1.0;
+    }
+
     // New function to calculate points from the currently selected season
     function calculatePointsFromSelectedSeason() {
         const elements = getAppElements('bbgm');
@@ -2090,6 +2320,7 @@
             // Also update current ratings UI to reflect "no player loaded" or similar
             currentBBGMSeasonRatings = null;
             updateBBGMCurrentRatingsUI();
+            updateBBGMSeasonStatsPanel(); // Update the new season stats panel
             return;
         }
 
@@ -2107,6 +2338,7 @@
                     updateBBGMCurrentRatingsUI();
                     // Crucially, update the dataset.previousSeason to the *reverted* value
                     seasonSelect.dataset.previousSeason = oldSelectedSeason;
+                    updateBBGMSeasonStatsPanel(); // Update the new season stats panel
                     return; // Stop execution
                 }
             } else if (newSelectedSeason > oldSelectedSeason + 1) {
@@ -2135,36 +2367,47 @@
         // Update the current ratings display and upgrade inputs based on the newly selected season
         currentBBGMSeasonRatings = getRatingsForSeason(newSelectedSeason);
         updateBBGMCurrentRatingsUI();
+        updateBBGMSeasonStatsPanel(); // Update the new season stats panel
     }
 
     // Helper function to get points for a single BBGM season
     function getPointsForSingleBBGMSeason(seasonYear) {
         let seasonPoints = 0;
-        const seasonStats = currentBBGMPlayerJson.players[0].stats.filter(s => s.season === seasonYear);
+        const player = currentBBGMPlayerJson.players[0];
+        const seasonStats = player.stats.filter(s => s.season === seasonYear);
         
         let regularSeasonStats = seasonStats.find(s => !s.playoffs);
         let playoffStats = seasonStats.find(s => s.playoffs);
 
         // Get multipliers from UI
         const elements = getAppElements('bbgm');
-        const winsCategory = elements.winsCategory?.value || '';
-        const playoffPerformance = elements.playoffPerformance?.value || '';
-        const winsMult = parseFloat(winsCategory) || 1;
-        const playoffMult = parseFloat(playoffPerformance) || 1;
+        const winsCategory = elements.winsCategory?.value || '1';
+        const playoffPerformance = elements.playoffPerformance?.value || '1';
+        
+        // Calculate the effective multiplier for each category, ensuring it's >= 1
+        const winsMult = 1 + (parseFloat(winsCategory) - 1) * GLOBAL_MULTIPLIER_NERF;
+        const playoffMult = 1 + (parseFloat(playoffPerformance) - 1) * GLOBAL_MULTIPLIER_NERF;
+        
         const combinedMultiplier = winsMult * playoffMult;
+
+        // Apply age and OVR nerfs
+        const ageNerf = getAgeNerfMultiplier(player.age);
+        const ovrNerf = getOvrNerfMultiplier(player.ovr); // Use player's overall, not season-specific ovr
+        const totalNerf = ageNerf * ovrNerf;
+        console.log(`[getPointsForSingleBBGMSeason] Season ${seasonYear}: Age Nerf: ${ageNerf}, OVR Nerf: ${ovrNerf}, Total Nerf: ${totalNerf}`);
 
 
         // Add points from regular season stats
         if (regularSeasonStats) {
-            seasonPoints += calculatePointsFromBBGMStats(regularSeasonStats) * combinedMultiplier; // Apply multipliers
+            seasonPoints += calculatePointsFromBBGMStats(regularSeasonStats) * combinedMultiplier * totalNerf; // Apply all multipliers
             // Add points for games played (GP) in regular season
-            seasonPoints += (regularSeasonStats.gp || 0) * POINTS_PER_GP * combinedMultiplier; // Apply multipliers
+            seasonPoints += (regularSeasonStats.gp || 0) * POINTS_PER_GP * combinedMultiplier * totalNerf; // Apply all multipliers
         }
         // Add points from playoff stats with multiplier
         if (playoffStats) {
-            seasonPoints += calculatePointsFromBBGMStats(playoffStats) * PLAYOFF_POINTS_MULTIPLIER * combinedMultiplier; // Apply both multipliers
+            seasonPoints += calculatePointsFromBBGMStats(playoffStats) * PLAYOFF_POINTS_MULTIPLIER * combinedMultiplier * totalNerf; // Apply all multipliers
             // Add points for games played (GP) in playoffs (also multiplied)
-            seasonPoints += (playoffStats.gp || 0) * POINTS_PER_GP * PLAYOFF_POINTS_MULTIPLIER * combinedMultiplier; // Apply both multipliers
+            seasonPoints += (playoffStats.gp || 0) * POINTS_PER_GP * PLAYOFF_POINTS_MULTIPLIER * combinedMultiplier * totalNerf; // Apply all multipliers
         }
         return seasonPoints;
     }
@@ -2207,7 +2450,11 @@
             // Reset UI if no player loaded
             appData.bbgm.upgradeCategories.forEach(category => {
                 const categoryElements = elements.getUpgradeElements(category.key);
-                if (categoryElements.current) categoryElements.current.value = 0;
+                if (categoryElements.current) {
+                    categoryElements.current.value = 0;
+                    categoryElements.current.readOnly = false; // Make editable
+                    categoryElements.current.style.backgroundColor = ''; // Reset background
+                }
                 if (categoryElements.target) categoryElements.target.value = 0;
             });
             updateBBGMPlayerInfoDisplay(); // Reset player name/OVR/POS/POT display
@@ -2229,16 +2476,16 @@
         const conversion = appData.bbgm.statConversionPoints;
         let total = 0;
         // Ensure stats are numbers, default to 0 if undefined or null
-        const getStatValue = (stat) => stat !== undefined && stat !== null ? stat : 0;
+        const getStatValue = (stat) => stats[stat] !== undefined && stats[stat] !== null ? stats[stat] : 0;
         // let detailedLog = ``; // Removed detailedLog for this function
 
         // Handle 2-pointers and 3-pointers first
-        const twoPointersMade = getStatValue(stats.fg) - getStatValue(stats.tp);
+        const twoPointersMade = getStatValue('fg') - getStatValue('tp');
         const twoPtPoints = twoPointersMade * conversion.twoPointersMade;
         total += twoPtPoints;
         // detailedLog += `  2PT Made (${twoPointersMade}) * ${conversion.twoPointersMade} = ${twoPtPoints}\n`; // Removed
 
-        const threePointersMade = getStatValue(stats.tp);
+        const threePointersMade = getStatValue('tp');
         const threePtPoints = threePointersMade * conversion.threePointersMade;
         total += threePtPoints;
         // detailedLog += `  3PT Made (${threePointersMade}) * ${conversion.threePointersMade} = ${threePtPoints}\n`; // Removed
@@ -2247,7 +2494,7 @@
         const otherStats = ['ft', 'reb', 'ast', 'stl', 'blk', 'tov', 'pf', 'pm', 'min']; // Removed 'gp' as it's handled separately
         otherStats.forEach(key => {
             if (conversion.hasOwnProperty(key)) {
-                const statValue = getStatValue(stats[key]);
+                const statValue = getStatValue(key);
                 const convertedPoints = statValue * conversion[key];
                 total += convertedPoints;
                 // detailedLog += `  ${key.toUpperCase()} (${statValue}) * ${conversion[key]} = ${convertedPoints}\n`; // Removed
@@ -2301,6 +2548,7 @@
         content += `<div style="display: flex; justify-content: space-between;"><span>Overall:</span> <span>${ratings.ovr || 'N/A'}</span></div>`;
         content += `<div style="display: flex; justify-content: space-between;"><span>Position:</span> <span>${ratings.pos || 'N/A'}</span></div>`;
         content += `<div style="display: flex; justify-content: space-between;"><span>Potential:</span> <span>${ratings.pot || 'N/A'}</span></div>`;
+        content += `<div style="display: flex; justify-content: space-between;"><span>Age:</span> <span>${player.age || 'N/A'}</span></div>`; // Display age
         content += `</div>`;
 
         // Ensure ratings is an object before proceeding
@@ -2338,6 +2586,78 @@
             content += `<p>Error: Ratings data is not in expected format.</p><p>Raw: ${JSON.stringify(ratings)}</p>`;
         }
         displayPanel.innerHTML = content;
+    }
+
+    // New function to update the Season Statistics panel
+    function updateBBGMSeasonStatsPanel() {
+        const elements = getAppElements('bbgm');
+        const statsContentDisplay = elements.statsContentDisplay;
+        const selectedSeason = parseInt(elements.seasonSelect.value);
+
+        // Update button active states
+        elements.showRegularSeasonStatsBtn.classList.remove('active');
+        elements.showPlayoffStatsBtn.classList.remove('active');
+        if (currentStatsView === 'regularSeason') {
+            elements.showRegularSeasonStatsBtn.classList.add('active');
+        } else {
+            elements.showPlayoffStatsBtn.classList.add('active');
+        }
+
+
+        if (!currentBBGMPlayerJson || !currentBBGMPlayerJson.players || !currentBBGMPlayerJson.players[0].stats || isNaN(selectedSeason)) {
+            statsContentDisplay.innerHTML = '<p>No stats available.</p>';
+            return;
+        }
+
+        const playerStats = currentBBGMPlayerJson.players[0].stats;
+        const seasonStats = playerStats.filter(s => s.season === selectedSeason);
+        const regularSeasonStats = seasonStats.find(s => !s.playoffs);
+        const playoffStats = seasonStats.find(s => s.playoffs);
+
+        const formatStat = (label, value) => `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>${label}:</span> <span>${value !== undefined ? value : 'N/A'}</span></div>`;
+
+        let content = '';
+        let statsToDisplay = null;
+
+        if (currentStatsView === 'regularSeason') {
+            statsToDisplay = regularSeasonStats;
+        } else { // playoffs
+            statsToDisplay = playoffStats;
+        }
+
+        if (statsToDisplay) {
+            content += formatStat('Games Played', statsToDisplay.gp);
+            content += formatStat('Minutes', statsToDisplay.min);
+            content += formatStat('Points', (statsToDisplay.fg || 0) + (statsToDisplay.ft || 0) + (statsToDisplay.tp || 0)); // Assuming points are sum of FGs, FTs, 3PTs
+            content += formatStat('Rebounds', statsToDisplay.reb);
+            content += formatStat('Assists', statsToDisplay.ast);
+            content += formatStat('Steals', statsToDisplay.stl);
+            content += formatStat('Blocks', statsToDisplay.blk);
+            content += formatStat('Turnovers', statsToDisplay.tov);
+            content += formatStat('Personal Fouls', statsToDisplay.pf);
+            content += formatStat('+/- Score', statsToDisplay.pm);
+            content += formatStat('FG Made', statsToDisplay.fg);
+            content += formatStat('3PT Made', statsToDisplay.tp);
+            content += formatStat('FT Made', statsToDisplay.ft);
+
+            // Add shooting percentages if available (fgp, tpp, ftp)
+            if (statsToDisplay.fga !== undefined && statsToDisplay.fga > 0) {
+                const fgp = ((statsToDisplay.fg / statsToDisplay.fga) * 100).toFixed(1);
+                content += formatStat('FG%', `${fgp}%`);
+            }
+            if (statsToDisplay.tpa !== undefined && statsToDisplay.tpa > 0) {
+                const tpp = ((statsToDisplay.tp / statsToDisplay.tpa) * 100).toFixed(1);
+                content += formatStat('3PT%', `${tpp}%`);
+            }
+            if (statsToDisplay.fta !== undefined && statsToDisplay.fta > 0) {
+                const ftp = ((statsToDisplay.ft / statsToDisplay.fta) * 100).toFixed(1);
+                content += formatStat('FT%', `${ftp}%`);
+            }
+
+        } else {
+            content += '<p>No stats available for this season.</p>';
+        }
+        statsContentDisplay.innerHTML = content;
     }
 
 
@@ -2422,6 +2742,234 @@ Keep it concise, professional, and use basketball terminology. Do not include an
         }
     }
 
+    // BBGM OVR Calculation function (provided by user)
+    function calculateOVR(ratings) {
+        // Ensure all ratings are numbers, default to 0 if undefined or null
+        const getRating = (attr) => ratings[attr] !== undefined && ratings[attr] !== null ? ratings[attr] : 0;
+
+        const r =
+            0.159 * (getRating('hgt') - 47.5) +
+            0.0777 * (getRating('stre') - 50.2) +
+            0.123 * (getRating('spd') - 50.8) +
+            0.051 * (getRating('jmp') - 48.7) +
+            0.0632 * (getRating('endu') - 39.9) +
+            0.0126 * (getRating('ins') - 42.4) +
+            0.0286 * (getRating('dnk') - 49.5) +
+            0.0202 * (getRating('ft') - 47.0) +
+            0.0726 * (getRating('tp') - 47.1) +
+            0.133 * (getRating('oiq') - 46.8) +
+            0.159 * (getRating('diq') - 46.7) +
+            0.059 * (getRating('drb') - 54.8) +
+            0.062 * (getRating('pss') - 51.3) +
+            0.01 * (getRating('fg') - 47.0) +
+            0.01 * (getRating('reb') - 51.4) +
+            48.5;
+
+        let fudgeFactor = 0;
+        if (r >= 68) {
+            fudgeFactor = 8;
+        } else if (r >= 50) {
+            fudgeFactor = 4 + (r - 50) * (4 / 18);
+        } else if (r >= 42) {
+            fudgeFactor = -5 + (r - 42) * (9 / 8);
+        } else if (r >= 31) {
+            fudgeFactor = -5 - (42 - r) * (5 / 11);
+        } else {
+            fudgeFactor = -10;
+        }
+
+        const val = Math.round(r + fudgeFactor);
+
+        if (val > 100) {
+            return 100;
+        }
+        if (val < 0) {
+            return 0;
+        }
+
+        return val;
+    }
+
+    // Function to calculate potential
+    function calculatePotential(ovr, age) {
+        // Base potential is higher for younger players
+        let potential = ovr + (23 - age) * 1.5; // Adjusted age influence for 17-23 range
+
+        // Lower OVR players have more room to grow
+        potential += Math.max(0, 70 - ovr) * 0.5; // Adjusted boost for lower OVR
+
+        // Apply a nerf based on age for older players
+        if (age >= 25) { // Start nerfing potential from age 25
+            potential -= (age - 24) * 0.8; // More aggressive nerf as they get older
+        }
+        
+        // Add a small random factor
+        potential += (Math.random() - 0.5) * 5; // +/- 2.5
+
+        return Math.min(100, Math.max(0, Math.round(potential)));
+    }
+
+    // Function to generate a random BBGM player
+    function generateRandomBBGMPlayer() {
+        console.log("[generateRandomBBGMPlayer] Generating random player.");
+
+        const ovrChances = [
+            { range: [0, 29], chance: 7.141 }, // <30 ovr
+            { range: [30, 39], chance: 54.921 }, // <40 ovr
+            { range: [40, 49], chance: 31.924 }, // <50 ovr
+            { range: [50, 59], chance: 4.024 },  // <60 ovr
+            { range: [60, 69], chance: 0.99 },   // <70 ovr
+            { range: [70, 79], chance: 0.63 },   // <80 ovr
+            { range: [80, 100], chance: 0.37 }   // 90+ ovr (adjusted to 80-100 for practical generation)
+        ];
+
+        let targetOvr = 0;
+        let cumulativeChance = 0;
+        const randomRoll = Math.random() * 100;
+
+        for (const tier of ovrChances) {
+            cumulativeChance += tier.chance;
+            if (randomRoll <= cumulativeChance) {
+                targetOvr = Math.floor(Math.random() * (tier.range[1] - tier.range[0] + 1)) + tier.range[0];
+                break;
+            }
+        }
+        if (targetOvr === 0) { // Fallback if no tier was hit (shouldn't happen with correct probabilities)
+            targetOvr = Math.floor(Math.random() * 100);
+        }
+        console.log(`[generateRandomBBGMPlayer] Target OVR selected: ${targetOvr}`);
+
+        const positions = ["PG", "SG", "SF", "PF", "C"];
+        const randomPos = positions[Math.floor(Math.random() * positions.length)];
+        const randomAge = Math.floor(Math.random() * (23 - 17 + 1)) + 17; // Age between 17 and 23
+
+        // Base ratings (average around 50)
+        let generatedRatings = {
+            hgt: 60, stre: 50, spd: 50, jmp: 50, endu: 50,
+            ins: 50, dnk: 50, ft: 50, fg: 50, tp: 50,
+            oiq: 50, diq: 50, drb: 50, pss: 50, reb: 50,
+        };
+
+        // Positional biases
+        const positionalBias = {
+            "PG": { drb: 15, pss: 15, spd: 10, oiq: 10, ins: -5, reb: -5, stre: -5 },
+            "SG": { tp: 15, fg: 10, drb: 5, spd: 5, diq: 5, reb: -5, stre: -5 },
+            "SF": { fg: 10, dnk: 5, reb: 5, diq: 5, oiq: 5, tp: 5, ins: 5 },
+            "PF": { reb: 15, ins: 10, stre: 10, blk: 5, dnk: 5, tp: -5, drb: -5 },
+            "C": { ins: 15, reb: 15, stre: 10, blk: 10, dnk: 5, spd: -10, pss: -5, drb: -5, tp: -5 }
+        };
+
+        // Apply positional bias
+        for (const attr in positionalBias[randomPos]) {
+            generatedRatings[attr] = Math.max(0, Math.min(100, generatedRatings[attr] + positionalBias[randomPos][attr]));
+        }
+
+        // Add a small random spread to make attributes slightly different
+        for (const attr in generatedRatings) {
+            if (attr !== 'hgt') { // Height is more fixed
+                generatedRatings[attr] = Math.max(0, Math.min(100, generatedRatings[attr] + (Math.floor(Math.random() * 11) - 5))); // +/- 5
+            }
+        }
+
+        // Iteratively adjust attributes to get closer to target OVR
+        let currentOvr = calculateOVR(generatedRatings);
+        let iterations = 0;
+        const maxIterations = 1000; // Increased iterations for better OVR matching
+        const adjustmentStep = 1; // How much to adjust attributes by
+
+        while (currentOvr !== targetOvr && iterations < maxIterations) {
+            const diff = targetOvr - currentOvr;
+            const attributesToAdjust = Object.keys(generatedRatings).filter(attr => !['hgt'].includes(attr)); 
+
+            if (attributesToAdjust.length === 0) break; 
+
+            // Prioritize adjusting attributes relevant to the target OVR direction
+            // If OVR too low, increase attributes. If OVR too high, decrease.
+            const sortedAttributes = attributesToAdjust.sort((a, b) => {
+                const weightA = calculateOVR({ ...generatedRatings, [a]: generatedRatings[a] + (diff > 0 ? adjustmentStep : -adjustmentStep) }) - currentOvr;
+                const weightB = calculateOVR({ ...generatedRatings, [b]: generatedRatings[b] + (diff > 0 ? adjustmentStep : -adjustmentStep) }) - currentOvr;
+                return Math.abs(diff - weightA) - Math.abs(diff - weightB); // Pick attribute that gets closer to target OVR
+            });
+
+            const randomAttr = sortedAttributes[0]; // Pick the most impactful attribute for adjustment
+
+            if (diff > 0) { // Need to increase OVR
+                if (generatedRatings[randomAttr] < 100) {
+                    generatedRatings[randomAttr] = Math.min(100, generatedRatings[randomAttr] + adjustmentStep);
+                }
+            } else { // Need to decrease OVR
+                if (generatedRatings[randomAttr] > 0) {
+                    generatedRatings[randomAttr] = Math.max(0, generatedRatings[randomAttr] - adjustmentStep);
+                }
+            }
+            currentOvr = calculateOVR(generatedRatings);
+            iterations++;
+        }
+        console.log(`[generateRandomBBGMPlayer] Final OVR: ${currentOvr} (Target: ${targetOvr}) after ${iterations} iterations.`);
+
+        // Ensure all ratings are within 0-100 and are integers
+        for (const key in generatedRatings) {
+            generatedRatings[key] = Math.min(100, Math.max(0, Math.round(generatedRatings[key])));
+        }
+
+        const playerPot = calculatePotential(currentOvr, randomAge);
+
+        const firstNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Charles", "Thomas", "Christopher", "Daniel", "Paul", "Mark", "Donald", "George", "Kenneth", "Steven", "Edward", "Brian"];
+        const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez"];
+        // Removed countries and weights as they are no longer displayed
+
+        const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+
+        const newPlayer = {
+            pid: `random_player_${Date.now()}`,
+            firstName: randomFirstName,
+            lastName: randomLastName,
+            age: randomAge,
+            pos: randomPos,
+            ovr: currentOvr,
+            pot: playerPot,
+            ratings: [{
+                season: new Date().getFullYear(), // Current year
+                ...generatedRatings,
+                ovr: currentOvr, // Ensure OVR in ratings matches calculated
+                pos: randomPos,
+                pot: playerPot,
+            }],
+            stats: [] // No stats for random players
+        };
+
+        // Set the generated player as the current player
+        currentBBGMPlayerJson = { players: [newPlayer] };
+        currentBBGMPlayerId = newPlayer.pid;
+        currentBBGMSeasonRatings = newPlayer.ratings[0]; // Set current season ratings to the generated ones
+
+        // Initialize bbgmAttributeTargets with the new player's current ratings
+        bbgmAttributeTargets = {};
+        for (const attrKey in currentBBGMSeasonRatings) {
+            if (appData.bbgm.attributeLabels.hasOwnProperty(attrKey)) {
+                bbgmAttributeTargets[attrKey] = currentBBGMSeasonRatings[attrKey] || 0;
+            }
+        }
+
+        // Do NOT set initial points based on OVR here. User will add manually.
+        // const elements = getAppElements('bbgm');
+        // const basePointsLowOvr = 200000; // More points for very low OVR
+        // const pointsDecreasePerOvr = 2500; // Decrease points as OVR increases
+        // const initialPoints = Math.max(0, basePointsLowOvr - (newPlayer.ovr * pointsDecreasePerOvr)); 
+        // elements.manualTotalPoints.value = initialPoints;
+        // updatePointsBankDisplay('bbgm');
+
+        // Update all relevant UI elements after generating a new player
+        populateBBGMSeasonSelect(); // Re-populate season select (will select current year)
+        updateBBGMPlayerInfoDisplay(); // Update player info panel
+        updateBBGMCurrentRatingsUI(); // Update current ratings panel and upgrade inputs
+        calculateAllUpgrades('bbgm'); // Recalculate upgrade costs based on new player
+        updateBBGMSeasonStatsPanel(); // Update season stats panel (will be empty for new player)
+
+        showMessage(`Generated new player: ${newPlayer.firstName} ${newPlayer.lastName} (OVR: ${newPlayer.ovr}, POT: ${newPlayer.pot}, Age: ${newPlayer.age}, Pos: ${newPlayer.pos}).`, 'success');
+    }
+
 
     // --- INITIALIZATION ---
     window.onload = function() {
@@ -2476,7 +3024,7 @@ Keep it concise, professional, and use basketball terminology. Do not include an
         document.getElementById('mainMenu')?.classList.add('active');
         console.log("No active app found, showing main menu.");
       }
-      console.log("--- Application Initialization Complete ---");
+      console.log("--- Application Initializing ---");
     };
   </script>
 </body>
